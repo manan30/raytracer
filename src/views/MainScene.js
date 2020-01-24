@@ -14,9 +14,11 @@ function MainScene() {
       scene.add(helper);
     }
   }, [scene]);
+
   return (
     <>
       <ambientLight attach='light' intensity={0.5} />
+
       <pointLight
         ref={lightRef}
         attach='light'
@@ -27,10 +29,12 @@ function MainScene() {
         <planeBufferGeometry attach='geometry' args={[1000, 1000]} />
         <meshStandardMaterial attach='material' />
       </mesh>
+
       <mesh position={[0, 70, 0]} castShadow receiveShadow>
         <sphereBufferGeometry attach='geometry' args={[50, 360, 360]} />
         <meshStandardMaterial attach='material' color={0xaa3300} />
       </mesh>
+
       <mesh position={[120, 120, 0]} castShadow receiveShadow>
         <sphereBufferGeometry attach='geometry' args={[50, 360, 360]} />
         <meshStandardMaterial attach='material' color={0x77ffcc} />

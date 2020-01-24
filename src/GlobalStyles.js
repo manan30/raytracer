@@ -10,6 +10,16 @@ export default createGlobalStyle`
     background-color: black;
     overflow:hidden !important;
   }
+
+  .content {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 32px;
+    color: white;
+    font-size: 12px;
+  }
+
 `;
 
 export const Canvas = styled(C)`
