@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { useThree } from 'react-three-fiber';
+import RayTracer from '../Raytracer';
 
 function MainScene({ canvas }) {
   const { camera, scene } = useThree();
@@ -18,12 +19,12 @@ function MainScene({ canvas }) {
   }, [camera, scene]);
 
   useEffect(() => {
-    // const { current: ele } = canvas;
-    // const context = ele.getContext('2d');
-    // const canvasWidth = ele.width;
-    // const canvasHeight = ele.height;
-    // const rayTracer = new RayTracer(canvasHeight, canvasWidth, context);
-    // rayTracer.render();
+    const { current: ele } = canvas;
+    const context = ele.getContext('2d');
+    const canvasWidth = ele.width;
+    const canvasHeight = ele.height;
+    const rayTracer = new RayTracer(canvasHeight, canvasWidth, context);
+    rayTracer.render();
   }, [canvas, scene]);
 
   return (

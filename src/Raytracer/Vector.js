@@ -1,5 +1,3 @@
-import { Vector2 } from 'three';
-
 export default class Vector {
   constructor(x, y, z) {
     this.x = x;
@@ -11,7 +9,7 @@ export default class Vector {
     return new Vector(
       vector1.x + vector2.x,
       vector1.y + vector2.y,
-      vector1.z + Vector2.z
+      vector1.z + vector2.z
     );
   }
 
@@ -19,7 +17,7 @@ export default class Vector {
     return new Vector(
       vector1.x - vector2.x,
       vector1.y - vector2.y,
-      vector1.z - Vector2.z
+      vector1.z - vector2.z
     );
   }
 
