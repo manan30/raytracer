@@ -19,10 +19,17 @@ export default createGlobalStyle`
     color: white;
     font-size: 12px;
   }
-
 `;
 
 export const Canvas = styled(C)`
   height: 100vh !important;
-  width: 100vw !important;
+  width: 50% !important;
+`;
+
+export const RayTracedCanvas = styled.canvas`
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 640px;
+  /* background-color: red; */
 `;

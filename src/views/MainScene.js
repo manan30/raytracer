@@ -1,8 +1,8 @@
+import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import { useThree } from 'react-three-fiber';
-import { PointLightHelper } from 'three';
 
-function MainScene() {
+function MainScene({ canvas }) {
   const { camera, scene } = useThree();
   const lightRef = useRef();
 
@@ -10,10 +10,21 @@ function MainScene() {
 
   useEffect(() => {
     if (lightRef.current) {
-      const helper = new PointLightHelper(lightRef.current, 10, 0x00ff00);
-      scene.add(helper);
+      // const helper = new PointLightHelper(lightRef.current, 10, 0x00ff00);
+      // scene.add(helper);
     }
-  }, [scene]);
+
+    scene.children.forEach(obj => camera.worldToLocal(obj.position));
+  }, [camera, scene]);
+
+  useEffect(() => {
+    // const { current: ele } = canvas;
+    // const context = ele.getContext('2d');
+    // const canvasWidth = ele.width;
+    // const canvasHeight = ele.height;
+    // const rayTracer = new RayTracer(canvasHeight, canvasWidth, context);
+    // rayTracer.render();
+  }, [canvas, scene]);
 
   return (
     <>
@@ -42,5 +53,9 @@ function MainScene() {
     </>
   );
 }
+
+MainScene.propTypes = {
+  canvas: PropTypes.objectOf(PropTypes.any).isRequired
+};
 
 export default MainScene;

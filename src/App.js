@@ -1,16 +1,19 @@
 import React from 'react';
 import Controls from './components/Controls';
-import { Canvas } from './GlobalStyles';
+import { Canvas, RayTracedCanvas } from './GlobalStyles';
 import MainScene from './views/MainScene';
 
 function App() {
+  const canvasRef = React.useRef();
+
   return (
     <>
       <Canvas>
-        <MainScene />
+        <MainScene canvas={canvasRef} />
         <Controls />
       </Canvas>
-      <div className='content'>
+      <RayTracedCanvas ref={canvasRef} />
+      {/* <div className='content'>
         Green Sphere
         <br />
         Position - x: 120, y: 120, z: 0
@@ -35,7 +38,7 @@ function App() {
         Position - x: 0, y: 50, z: 300
         <br />
         LookAt - x: 0, y: 0, z: 0
-      </div>
+      </div> */}
     </>
   );
 }
