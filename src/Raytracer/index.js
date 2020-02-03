@@ -1,3 +1,4 @@
+import Sphere from './Sphere';
 import Vector from './Vector';
 
 /**
@@ -18,38 +19,13 @@ export default class RayTracer {
           type: 'plane',
           position: new Vector(0, 0, 1)
         },
-        {
-          type: 'green-sphere',
-          position: new Vector(120, 70, -300),
-          size: 50
-        },
-        {
-          type: 'red-sphere',
-          position: new Vector(0, 20, -300),
-          size: 50
-        }
+        new Sphere('green', new Vector(120, 70, -300), 50),
+        new Sphere('red', new Vector(0, 20, -300), 50)
       ]
     };
     this.height = height;
     this.width = width;
     this.context = context;
-  }
-
-  // sphereNormal(sphere, pos) {
-  //   return this.vector.unitVector(this.vector.subtract(pos, sphere.position));
-  // }
-
-  sphereIntersection(sphere, ray) {
-    const eyeToCenter = Vector.subtract(sphere.position, ray.point);
-    const v = Vector.dotProduct(eyeToCenter, ray.vector);
-
-    if (v >= 0) {
-      const eoDot = Vector.dotProduct(eyeToCenter, eyeToCenter);
-      const discriminant = sphere.size * sphere.size - (eoDot - v * v);
-      if (discriminant >= 0) {
-        return v - Math.sqrt(discriminant);
-      }
-    }
   }
 
   // planeIntersection(object, ray) {
@@ -68,7 +44,7 @@ export default class RayTracer {
     for (let i = 0; i < this.scene.objects.length; i += 1) {
       const object = this.scene.objects[i];
 
-      if (i !== 0) dist = this.sphereIntersection(object, ray);
+      if (i !== 0) dist = object.intersect(ray);
       // else dist = this.planeIntersection(object, ray);
 
       if (dist !== undefined && dist < closest[0]) {
