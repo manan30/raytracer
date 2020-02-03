@@ -1,4 +1,5 @@
 import Camera from './Camera';
+import Plane from './Plane';
 import Sphere from './Sphere';
 import Vector from './Vector';
 
@@ -12,10 +13,7 @@ export default class RayTracer {
       camera: new Camera(new Vector(0, 50, 300), new Vector(0, 0, 0), 75),
       lights: new Vector(200, 200, -300),
       objects: [
-        {
-          type: 'plane',
-          position: new Vector(0, 0, 1)
-        },
+        new Plane('plane', new Vector(0, 50, -300)),
         new Sphere('green', new Vector(120, 70, -300), 50),
         new Sphere('red', new Vector(0, 20, -300), 50)
       ]
@@ -25,24 +23,13 @@ export default class RayTracer {
     this.context = context;
   }
 
-  // planeIntersection(object, ray) {
-  //   const denom = this.vector.dotProduct(object.position, ray.vector);
-  //   if (denom > 0) {
-  //     return null;
-  //   }
-  //   const dist =
-  //     (this.vector.dotProduct(object.position, ray.point) + 0.0) / -denom;
-  //   return dist;
-  // }
-
   intersectScene(ray) {
     let closest = [Infinity, null];
     let dist;
     for (let i = 0; i < this.scene.objects.length; i += 1) {
       const object = this.scene.objects[i];
 
-      if (i !== 0) dist = object.intersect(ray);
-      // else dist = this.planeIntersection(object, ray);
+      dist = object.intersect(ray);
 
       if (dist !== undefined && dist < closest[0]) {
         closest = [dist, object];
