@@ -1,5 +1,4 @@
 import React from 'react';
-import Controls from './components/Controls';
 import { Canvas, RayTracedCanvas } from './GlobalStyles';
 import MainScene from './views/MainScene';
 
@@ -10,7 +9,7 @@ function App() {
     <>
       <Canvas>
         <MainScene canvas={canvasRef} />
-        <Controls />
+        {/* <Controls /> */}
       </Canvas>
       <RayTracedCanvas ref={canvasRef} />
       {/* <div className='content'>

@@ -15,6 +15,7 @@ function MainScene({ canvas }) {
       // scene.add(helper);
     }
 
+    camera.lookAt(0, 0, 0);
     scene.children.forEach(obj => camera.worldToLocal(obj.position));
   }, [camera, scene]);
 

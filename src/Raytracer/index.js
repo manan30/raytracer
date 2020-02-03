@@ -1,3 +1,4 @@
+import Camera from './Camera';
 import Sphere from './Sphere';
 import Vector from './Vector';
 
@@ -8,11 +9,7 @@ import Vector from './Vector';
 export default class RayTracer {
   constructor(height, width, context) {
     this.scene = {
-      camera: {
-        position: new Vector(0, 50, 300),
-        lookAt: new Vector(0, 0, 0),
-        fov: 75
-      },
+      camera: new Camera(new Vector(0, 50, 300), new Vector(0, 0, 0), 75),
       lights: new Vector(200, 200, -300),
       objects: [
         {
@@ -70,22 +67,6 @@ export default class RayTracer {
 
   render() {
     const { camera } = this.scene;
-
-    const eyeVector = Vector.normalize(
-      Vector.subtract(camera.lookAt, camera.position)
-    );
-
-    const vectorRight = Vector.scale(
-      Vector.normalize(Vector.crossProduct(eyeVector, new Vector(0, -1, 0))),
-      1.5
-    );
-
-    const vectorUp = Vector.scale(
-      Vector.normalize(Vector.crossProduct(eyeVector, vectorRight)),
-      1.5
-    );
-
-    let color;
     const ray = {
       point: camera.position
     };
@@ -95,10 +76,10 @@ export default class RayTracer {
       const recenterY = y1 => -(y1 - this.height / 2.0) / 2.0 / this.height;
       return Vector.normalize(
         Vector.add(
-          eyeVector,
+          camera.eyeVector,
           Vector.add(
-            Vector.scale(vectorRight, recenterX(x)),
-            Vector.scale(vectorUp, recenterY(y))
+            Vector.scale(camera.vectorRight, recenterX(x)),
+            Vector.scale(camera.vectorUp, recenterY(y))
           )
         )
       );
@@ -107,7 +88,7 @@ export default class RayTracer {
     for (let x = 0; x < this.width; x += 1) {
       for (let y = 0; y < this.height; y += 1) {
         ray.vector = getPoint(x, y);
-        color = this.trace(ray, 0);
+        const color = this.trace(ray, 0);
 
         this.context.fillStyle = `rgb(${color.x},${color.y}, ${color.z})`;
         this.context.fillRect(x, y, 1, 1);
