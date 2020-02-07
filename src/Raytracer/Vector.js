@@ -46,12 +46,12 @@ export default class Vector {
   }
 
   static normalize(vector) {
-    const mag = this.magnitude(vector);
+    const mag = Vector.magnitude(vector);
     const div = mag === 0 ? Infinity : 1.0 / mag;
-    return this.scale(vector, div);
+    return Vector.scale(vector, div);
   }
 
-  static length(vector) {
-    return Math.sqrt(this.dotProduct(vector, vector));
-  }
+  // static length(vector) {
+  //   return Math.sqrt(this.dotProduct(vector, vector));
+  // }
 }

@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useThree } from 'react-three-fiber';
 import RayTracer from '../Raytracer';
 
-function MainScene({ canvas }) {
+function MainScene({ canvasRef }) {
   const { camera, scene } = useThree();
   const lightRef = useRef();
 
@@ -20,13 +20,16 @@ function MainScene({ canvas }) {
   }, [camera, scene]);
 
   useEffect(() => {
-    const { current: ele } = canvas;
-    const context = ele.getContext('2d');
-    const canvasWidth = ele.width;
-    const canvasHeight = ele.height;
-    const rayTracer = new RayTracer(canvasHeight, canvasWidth, context);
+    const { current: ele } = canvasRef;
+    const canvas = document.createElement('canvas');
+    canvas.style.width = '100%';
+    canvas.width = 512;
+    canvas.height = 512;
+    ele.appendChild(canvas);
+    const context = canvas.getContext('2d');
+    const rayTracer = new RayTracer(canvas.width, canvas.height, context);
     rayTracer.render();
-  }, [canvas, scene]);
+  }, [canvasRef, scene]);
 
   return (
     <>
@@ -57,7 +60,7 @@ function MainScene({ canvas }) {
 }
 
 MainScene.propTypes = {
-  canvas: PropTypes.objectOf(PropTypes.any).isRequired
+  canvasRef: PropTypes.objectOf(PropTypes.any).isRequired
 };
 
 export default MainScene;

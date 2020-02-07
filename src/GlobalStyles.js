@@ -22,14 +22,21 @@ export default createGlobalStyle`
 `;
 
 export const Canvas = styled(C)`
+  display: inline-block;
   height: 100vh !important;
   width: 50% !important;
 `;
 
-export const RayTracedCanvas = styled.canvas`
-  position: absolute;
+export const RayTracedCanvas = styled.div`
+  position: relative;
   left: 50%;
-  top: 0;
-  height: 640px;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  /* height: 256px;
+  width: 256px; */
+  /* height: 512px;
+  width: 512px; */
+
+  border: 1px solid white;
   /* background-color: red; */
 `;

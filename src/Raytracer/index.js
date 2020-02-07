@@ -1,4 +1,5 @@
 import Camera from './Camera';
+import Color from './Color';
 import Plane from './Plane';
 import Sphere from './Sphere';
 import Vector from './Vector';
@@ -10,12 +11,26 @@ import Vector from './Vector';
 export default class RayTracer {
   constructor(height, width, context) {
     this.scene = {
-      camera: new Camera(new Vector(0, 50, 300), new Vector(0, 0, 0), 75),
-      lights: new Vector(200, 200, -300),
+      camera: new Camera(
+        new Vector(3.0, -5.0, -30.0),
+        new Vector(0.0, 0.0, 0.0),
+        75
+      ),
+      // lights: new Vector(200, 200, -300),
       objects: [
-        new Plane('plane', new Vector(0, 50, -300)),
-        new Sphere('green', new Vector(120, 70, -300), 50),
-        new Sphere('red', new Vector(0, 20, -300), 50)
+        new Plane('plane', new Vector(0.0, 1.0, 0.0), new Color(0.9, 0.9, 0.9)),
+        new Sphere(
+          'green',
+          new Vector(0.0, 1.0, -0.25),
+          0.8,
+          new Color(0.4, 1.0, 0.8)
+        ),
+        new Sphere(
+          'red',
+          new Vector(-1.0, 0.5, 1.5),
+          1.0,
+          new Color(0.6, 0.2, 0.0)
+        )
       ]
     };
     this.height = height;
@@ -24,32 +39,30 @@ export default class RayTracer {
   }
 
   intersectScene(ray) {
-    let closest = [Infinity, null];
+    let closest = +Infinity;
     let dist;
+    let closestObject;
     for (let i = 0; i < this.scene.objects.length; i += 1) {
       const object = this.scene.objects[i];
 
       dist = object.intersect(ray);
 
-      if (dist !== undefined && dist < closest[0]) {
-        closest = [dist, object];
+      if (dist !== null && dist < closest) {
+        closest = dist;
+        closestObject = object;
       }
     }
-    return closest;
+    return { closestObject, closest };
   }
 
-  trace(ray, depth) {
-    if (depth > 5) {
-      return {};
+  trace(ray) {
+    const { closestObject, closest: dist } = this.intersectScene(ray);
+
+    if (dist === Infinity) {
+      return Color.toDrawingColor(Color.background);
     }
 
-    const distObject = this.intersectScene(ray);
-
-    if (distObject[0] === Infinity) {
-      return { x: 0, y: 0, z: 0 };
-    }
-
-    return { x: 255, y: 0, z: 0 };
+    return Color.toDrawingColor(closestObject.color);
   }
 
   render() {
@@ -77,7 +90,7 @@ export default class RayTracer {
         ray.vector = getPoint(x, y);
         const color = this.trace(ray, 0);
 
-        this.context.fillStyle = `rgb(${color.x},${color.y}, ${color.z})`;
+        this.context.fillStyle = `rgb(${color.r},${color.g}, ${color.b})`;
         this.context.fillRect(x, y, 1, 1);
       }
     }

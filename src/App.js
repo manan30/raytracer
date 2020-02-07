@@ -1,17 +1,20 @@
 import React from 'react';
 import { Canvas, RayTracedCanvas } from './GlobalStyles';
 import MainScene from './views/MainScene';
+// import Controls from './components/Controls';
 
 function App() {
   const canvasRef = React.useRef();
 
   return (
-    <>
+    <div style={{ display: 'inline-flex', height: '100%', width: '100%' }}>
       <Canvas>
-        <MainScene canvas={canvasRef} />
+        <MainScene canvasRef={canvasRef} />
         {/* <Controls /> */}
       </Canvas>
-      <RayTracedCanvas ref={canvasRef} />
+      <div style={{ width: '50%' }}>
+        <RayTracedCanvas ref={canvasRef} />
+      </div>
       {/* <div className='content'>
         Green Sphere
         <br />
@@ -38,7 +41,7 @@ function App() {
         <br />
         LookAt - x: 0, y: 0, z: 0
       </div> */}
-    </>
+    </div>
   );
 }
 

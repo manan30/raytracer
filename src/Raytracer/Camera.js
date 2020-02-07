@@ -12,7 +12,7 @@ export default class Camera {
 
     this.vectorRight = Vector.scale(
       Vector.normalize(
-        Vector.crossProduct(this.eyeVector, new Vector(0, -1, 0))
+        Vector.crossProduct(this.eyeVector, new Vector(0.0, -1.0, 0.0))
       ),
       1.5
     );
