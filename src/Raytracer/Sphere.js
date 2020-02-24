@@ -1,4 +1,5 @@
 import Vector from './Vector';
+import Intersection from './Intersection';
 
 export default class Sphere {
   constructor(name, position, size, color) {
@@ -7,9 +8,13 @@ export default class Sphere {
     this.color = color;
   }
 
+  normal(pos) {
+    return Vector.normalize(Vector.subtract(pos, this.position));
+  }
+
   intersect(ray) {
-    const eyeToCenter = Vector.subtract(this.position, ray.point);
-    const v = Vector.dotProduct(eyeToCenter, ray.vector);
+    const eyeToCenter = Vector.subtract(this.position, ray.start);
+    const v = Vector.dotProduct(eyeToCenter, ray.dir);
     let dist = 0;
 
     if (v >= 0) {
@@ -23,6 +28,6 @@ export default class Sphere {
     if (dist === 0) {
       return null;
     }
-    return dist;
+    return new Intersection(this, ray, dist);
   }
 }
