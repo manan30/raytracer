@@ -4,10 +4,11 @@ import { useThree } from 'react-three-fiber';
 import RayTracer from '../Raytracer';
 
 function MainScene({ canvasRef }) {
-  const { camera, scene } = useThree();
+  const { camera, scene, gl } = useThree();
   const lightRef = useRef();
 
   camera.position.set(0, 50, 300);
+  gl.setSize(window.innerWidth / 2, window.innerHeight);
 
   useEffect(() => {
     if (lightRef.current) {
@@ -23,8 +24,8 @@ function MainScene({ canvasRef }) {
     const { current: ele } = canvasRef;
     const canvas = document.createElement('canvas');
     canvas.style.width = '100%';
-    canvas.width = 512;
-    canvas.height = 512;
+    canvas.width = 2056;
+    canvas.height = 2056;
     ele.appendChild(canvas);
     const context = canvas.getContext('2d');
     const rayTracer = new RayTracer(canvas.width, canvas.height, context);
