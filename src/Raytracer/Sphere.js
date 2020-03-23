@@ -2,10 +2,12 @@ import Vector from './Vector';
 import Intersection from './Intersection';
 
 export default class Sphere {
-  constructor(name, position, size, color) {
+  constructor(name, position, size, color, surface) {
+    this.name = name;
     this.position = position;
     this.size = size;
     this.color = color;
+    this.surface = surface;
   }
 
   normal(pos) {

@@ -20,21 +20,53 @@ export default class RayTracer {
       ),
       lights: [
         new Light(new Vector(-5.0, 5.0, 5.0), new Color(0.4, 1.0, 0.8)),
-        new Light(new Vector(5.0, 10.0, -5.0), new Color(0.9, 0.9, 0.9))
+        new Light(new Vector(10.0, 5.0, -5.0), new Color(0.6, 0.2, 0.0))
       ],
       objects: [
-        new Plane('plane', new Vector(0.0, 1.0, 0.0), new Color(0.9, 0.9, 0.9)),
-        new Sphere(
-          'green',
-          new Vector(0.0, 1.0, -0.25),
-          0.8,
-          new Color(0.4, 1.0, 0.8)
+        new Plane(
+          'plane',
+          new Vector(0.0, 1.0, 0.0),
+          new Color(0.9, 0.9, 0.9),
+          {
+            diffuse: pos => {
+              if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
+                return Color.white;
+              }
+              return Color.black;
+            },
+            specular: Color.white,
+            reflection: pos => {
+              if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
+                return 0.1;
+              }
+              return 0.7;
+            },
+            roughness: 150
+          }
         ),
         new Sphere(
-          'red',
+          'sphere',
+          new Vector(0.0, 1.0, -0.25),
+          0.8,
+          new Color(0.4, 1.0, 0.8),
+          {
+            diffuse: Color.white,
+            specular: Color.grey,
+            reflect: 0.7,
+            roughness: 250
+          }
+        ),
+        new Sphere(
+          'sphere',
           new Vector(-1.0, 0.5, 1.5),
           1.0,
-          new Color(0.6, 0.2, 0.0)
+          new Color(0.6, 0.2, 0.0),
+          {
+            diffuse: Color.white,
+            specular: Color.grey,
+            reflect: 0.7,
+            roughness: 250
+          }
         )
       ]
     };
@@ -73,13 +105,18 @@ export default class RayTracer {
       );
       const scolor =
         specular > 0
-          ? Color.scale(Math.pow(specular, 250), light.color)
+          ? Color.scale(specular ** object.surface.roughness, light.color)
           : Color.background;
       return Color.plus(
         acc,
         Color.plus(
-          Color.times(Color.white, lcolor),
-          Color.times(Color.white, scolor)
+          Color.times(
+            object.name === 'sphere'
+              ? object.surface.diffuse
+              : object.surface.diffuse(position),
+            lcolor
+          ),
+          Color.times(object.surface.specular, scolor)
         )
       );
     };

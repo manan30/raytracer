@@ -57,10 +57,10 @@ function MainScene({ canvasRef }) {
         <meshStandardMaterial attach='material' color={0x77ffcc} />
       </mesh>
 
-      <mesh position={[-150, 70, 150]} castShadow receiveShadow>
+      {/* <mesh position={[-150, 70, 150]} castShadow receiveShadow>
         <cylinderBufferGeometry attach='geometry' args={[50, 50, 200, 360]} />
         <meshStandardMaterial attach='material' color={0x2c4251} />
-      </mesh>
+      </mesh> */}
     </>
   );
 }
