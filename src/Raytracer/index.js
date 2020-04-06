@@ -20,7 +20,7 @@ export default class RayTracer {
       ),
       lights: [
         new Light(new Vector(-5.0, 5.0, 5.0), new Color(0.4, 1.0, 0.8)),
-        new Light(new Vector(10.0, 5.0, -5.0), new Color(0.6, 0.2, 0.0))
+        new Light(new Vector(10.0, 5.0, -5.0), new Color(0.6, 0.2, 0.0)),
       ],
       objects: [
         new Plane(
@@ -28,47 +28,47 @@ export default class RayTracer {
           new Vector(0.0, 1.0, 0.0),
           new Color(0.9, 0.9, 0.9),
           {
-            diffuse: pos => {
+            diffuse: (pos) => {
               if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
                 return Color.white;
               }
               return Color.black;
             },
             specular: Color.white,
-            reflection: pos => {
+            reflection: (pos) => {
               if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
                 return 0.1;
               }
               return 0.7;
             },
-            roughness: 150
+            roughness: 150,
           }
         ),
         new Sphere(
           'sphere',
           new Vector(0.0, 1.0, -0.25),
-          0.8,
+          2.0,
           new Color(0.4, 1.0, 0.8),
           {
             diffuse: Color.white,
             specular: Color.grey,
-            reflect: 0.7,
-            roughness: 250
+            reflection: () => 0.7,
+            roughness: 250,
           }
         ),
         new Sphere(
           'sphere',
-          new Vector(-1.0, 0.5, 1.5),
-          1.0,
+          new Vector(-3.0, 0.5, 1.5),
+          1.5,
           new Color(0.6, 0.2, 0.0),
           {
             diffuse: Color.white,
             specular: Color.grey,
-            reflect: 0.7,
-            roughness: 250
+            reflection: () => 0.7,
+            roughness: 250,
           }
-        )
-      ]
+        ),
+      ],
     };
     this.height = height;
     this.width = width;
@@ -123,6 +123,19 @@ export default class RayTracer {
     return this.scene.lights.reduce(lighting, Color.background);
   }
 
+  generateReflectionColor(
+    object,
+    position,
+    normal,
+    reflectionDirection,
+    depth
+  ) {
+    return Color.scale(
+      object.surface.reflection(position),
+      this.trace({ start: position, dir: reflectionDirection }, depth + 1)
+    );
+  }
+
   intersectScene(ray) {
     let closest = +Infinity;
     let closestIntersection;
@@ -164,7 +177,18 @@ export default class RayTracer {
       )
     );
 
-    return naturalColor;
+    const reflectedColor =
+      depth >= 5
+        ? Color.grey
+        : this.generateReflectionColor(
+            intersection.object,
+            position,
+            normal,
+            reflectionDirection,
+            depth
+          );
+
+    return Color.plus(naturalColor, reflectedColor);
   }
 
   trace(ray, depth) {
@@ -174,9 +198,6 @@ export default class RayTracer {
       return Color.toDrawingColor(Color.background);
     }
 
-    // globalIllumination(intersection, depth);
-
-    // return Color.toDrawingColor(intersection.object.color);
     return Color.toDrawingColor(this.globalIllumination(intersection, depth));
   }
 
@@ -184,8 +205,8 @@ export default class RayTracer {
     const { camera } = this.scene;
 
     const getPoint = (x, y) => {
-      const recenterX = x1 => (x1 - this.width / 2.0) / 2.0 / this.width;
-      const recenterY = y1 => -(y1 - this.height / 2.0) / 2.0 / this.height;
+      const recenterX = (x1) => (x1 - this.width / 2.0) / 2.0 / this.width;
+      const recenterY = (y1) => -(y1 - this.height / 2.0) / 2.0 / this.height;
       return Vector.normalize(
         Vector.add(
           camera.n,
