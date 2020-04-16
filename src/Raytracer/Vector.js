@@ -49,7 +49,7 @@ export default class Vector {
     return this.x === vector.x && this.y === vector.y && this.z === vector.z;
   }
 
-  static normalize() {
+  normalize() {
     const magnitude = this.length();
     return new Vector(
       this.x / magnitude,
