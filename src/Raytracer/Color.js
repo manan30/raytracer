@@ -5,42 +5,46 @@ export default class Color {
     this.b = b;
   }
 
-  static black = new Color(0.0, 0.0, 0.0);
+  black = new Color(0.0, 0.0, 0.0);
 
-  static blue = new Color(0.0, 0.3, 0.6);
+  blue = new Color(0.0, 0.3, 0.6);
 
-  static white = new Color(1.0, 1.0, 1.0);
+  white = new Color(1.0, 1.0, 1.0);
 
-  static grey = new Color(0.5, 0.5, 0.5);
+  grey = new Color(0.5, 0.5, 0.5);
 
-  static background = Color.black;
+  background = Color.black;
 
-  static scale(k, color) {
-    return new Color(k * color.r, k * color.g, k * color.b);
+  scalarMultiply(factor) {
+    return new Color(this.r * factor, this.g * factor, this.b * factor);
   }
 
-  static plus(color1, color2) {
+  scalarDivide(factor) {
+    return new Color(this.r / factor, this.g / factor, this.b / factor);
+  }
+
+  add(color) {
+    return new Color(this.r + color.r, this.g + color.g, this.b + color.b);
+  }
+
+  multiply(color) {
+    return new Color(this.r * color.r, this.g * color.g, this.b * color.b);
+  }
+
+  clamp(lower, upper) {
     return new Color(
-      color1.r + color2.r,
-      color1.g + color2.g,
-      color1.b + color2.b
+      Math.max(lower, Math.min(this.r, upper)),
+      Math.max(lower, Math.min(this.g, upper)),
+      Math.max(lower, Math.min(this.b, upper))
     );
   }
 
-  static times(color1, color2) {
+  toDrawingColor() {
+    const legalize = (d) => (d > 1 ? 1 : d);
     return new Color(
-      color1.r * color2.r,
-      color1.g * color2.g,
-      color1.b * color2.b
+      Math.floor(legalize(this.r) * 255),
+      Math.floor(legalize(this.g) * 255),
+      Math.floor(legalize(this.b) * 255)
     );
-  }
-
-  static toDrawingColor(c) {
-    const legalize = d => (d > 1 ? 1 : d);
-    return {
-      r: Math.floor(legalize(c.r) * 255),
-      g: Math.floor(legalize(c.g) * 255),
-      b: Math.floor(legalize(c.b) * 255)
-    };
   }
 }
