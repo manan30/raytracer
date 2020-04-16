@@ -4,7 +4,8 @@ export default class Intersection {
     this.position = position;
     this.normal = normal;
     this.material = material;
-    if (this.isHit) this.distance = position.distance(ray.origin);
-    else this.distance = Number.MAX_SAFE_INTEGER;
+    this.distance = this.isHit
+      ? position.distance(ray.start)
+      : Number.MAX_SAFE_INTEGER;
   }
 }

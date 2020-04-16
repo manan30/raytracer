@@ -8,10 +8,6 @@ export default class Plane {
     this.material = material;
   }
 
-  normal() {
-    return this.position;
-  }
-
   intersect(ray) {
     const denom = this.position.dotProduct(ray.dir);
 
@@ -19,7 +15,7 @@ export default class Plane {
       return new Intersection(false);
     }
 
-    const dist = this.position.dotProduct(ray.start).scalarDivide(-denom);
+    const dist = this.position.dotProduct(ray.start) / -denom;
     const position = ray.at(dist);
 
     return new Intersection(true, position, this.position, ray, this.material);

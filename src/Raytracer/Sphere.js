@@ -1,4 +1,3 @@
-import Vector from './Vector';
 import Intersection from './Intersection';
 
 export default class Sphere {
@@ -10,14 +9,10 @@ export default class Sphere {
     this.material = material;
   }
 
-  normal(pos) {
-    return Vector.normalize(Vector.subtract(pos, this.position));
-  }
-
   intersect(ray) {
-    const b = 2 * ray.direction.dot(ray.origin.subtract(this.center));
-    const rayToCenter = ray.origin.subtract(this.center);
-    const c = rayToCenter.dot(rayToCenter) - this.radius * this.radius;
+    const b = 2 * ray.dir.dotProduct(ray.start.subtract(this.position));
+    const rayToCenter = ray.start.subtract(this.position);
+    const c = rayToCenter.dotProduct(rayToCenter) - this.size * this.size;
     const discriminant = b * b - 4 * c;
 
     if (discriminant <= 0) return new Intersection(false);
@@ -31,7 +26,7 @@ export default class Sphere {
     else closestDistance = Math.min(distance1, distance2);
 
     const position = ray.at(closestDistance);
-    const normal = position.subtract(this.center).scalarDivide(this.radius);
+    const normal = position.subtract(this.position).scalarDivide(this.size);
 
     return new Intersection(true, position, normal, ray, this.material);
   }

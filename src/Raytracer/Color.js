@@ -5,15 +5,25 @@ export default class Color {
     this.b = b;
   }
 
-  black = new Color(0.0, 0.0, 0.0);
+  static black() {
+    return Color(0.0, 0.0, 0.0);
+  }
 
-  blue = new Color(0.0, 0.3, 0.6);
+  static blue() {
+    return Color(0.0, 0.3, 0.6);
+  }
 
-  white = new Color(1.0, 1.0, 1.0);
+  static white() {
+    return Color(1.0, 1.0, 1.0);
+  }
 
-  grey = new Color(0.5, 0.5, 0.5);
+  static grey() {
+    return Color(0.5, 0.5, 0.5);
+  }
 
-  background = Color.black;
+  static background() {
+    return Color.black;
+  }
 
   scalarMultiply(factor) {
     return new Color(this.r * factor, this.g * factor, this.b * factor);
