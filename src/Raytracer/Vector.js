@@ -5,53 +5,56 @@ export default class Vector {
     this.z = z;
   }
 
-  static add(vector1, vector2) {
+  add(vector) {
+    return new Vector(this.x + vector.x, this.y + vector.y, this.z + vector.z);
+  }
+
+  subtract(vector) {
+    return new Vector(this.x - vector.x, this.y - vector.y, this.z - vector.z);
+  }
+
+  dotProduct(vector) {
+    return this.x * vector.x + this.y * vector.y + this.z * vector.z;
+  }
+
+  crossProduct(vector) {
     return new Vector(
-      vector1.x + vector2.x,
-      vector1.y + vector2.y,
-      vector1.z + vector2.z
+      this.y * vector.z - this.z * vector.y,
+      this.z * vector.x - this.x * vector.z,
+      this.x * vector.y - this.y * vector.x
     );
   }
 
-  static subtract(vector1, vector2) {
+  magnitude() {
+    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+  }
+
+  scalarMultiply(factor) {
+    return new Vector(this.x * factor, this.y * factor, this.z * factor);
+  }
+
+  scalarDivide(factor) {
+    return new Vector(this.x / factor, this.y / factor, this.z / factor);
+  }
+
+  length() {
+    return Math.sqrt(this.dotProduct(this));
+  }
+
+  distance(vector) {
+    return vector.subtract(this).length();
+  }
+
+  equals(vector) {
+    return this.x === vector.x && this.y === vector.y && this.z === vector.z;
+  }
+
+  static normalize() {
+    const magnitude = this.length();
     return new Vector(
-      vector1.x - vector2.x,
-      vector1.y - vector2.y,
-      vector1.z - vector2.z
+      this.x / magnitude,
+      this.y / magnitude,
+      this.z / magnitude
     );
   }
-
-  static dotProduct(vector1, vector2) {
-    return (
-      vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
-    );
-  }
-
-  static crossProduct(vector1, vector2) {
-    return new Vector(
-      vector1.y * vector2.z - vector1.z * vector2.y,
-      vector1.z * vector2.x - vector1.x * vector2.z,
-      vector1.x * vector2.y - vector1.y * vector2.x
-    );
-  }
-
-  static magnitude(vector) {
-    return Math.sqrt(
-      vector.x * vector.x + vector.y * vector.y + vector.z * vector.z
-    );
-  }
-
-  static scale(vector, factor) {
-    return new Vector(vector.x * factor, vector.y * factor, vector.z * factor);
-  }
-
-  static normalize(vector) {
-    const mag = Vector.magnitude(vector);
-    const div = mag === 0 ? Infinity : 1.0 / mag;
-    return Vector.scale(vector, div);
-  }
-
-  // static length(vector) {
-  //   return Math.sqrt(this.dotProduct(vector, vector));
-  // }
 }
