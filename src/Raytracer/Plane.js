@@ -1,12 +1,11 @@
-import Vector from './Vector';
 import Intersection from './Intersection';
 
 export default class Plane {
-  constructor(name, position, color, surface) {
+  constructor(name, position, color, material) {
     this.name = name;
     this.position = position;
     this.color = color;
-    this.surface = surface;
+    this.material = material;
   }
 
   normal() {
@@ -14,11 +13,15 @@ export default class Plane {
   }
 
   intersect(ray) {
-    const denom = Vector.dotProduct(this.position, ray.dir);
+    const denom = this.position.dotProduct(ray.dir);
+
     if (denom > 0) {
-      return null;
+      return new Intersection(false);
     }
-    const dist = (Vector.dotProduct(this.position, ray.start) + 0.0) / -denom;
-    return new Intersection(this, ray, dist);
+
+    const dist = this.position.dotProduct(ray.start).scalarDivide(-denom);
+    const position = ray.at(dist);
+
+    return new Intersection(true, position, this.position, ray, this.material);
   }
 }

@@ -2,12 +2,12 @@ import Vector from './Vector';
 import Intersection from './Intersection';
 
 export default class Sphere {
-  constructor(name, position, size, color, surface) {
+  constructor(name, position, size, color, material) {
     this.name = name;
     this.position = position;
     this.size = size;
     this.color = color;
-    this.surface = surface;
+    this.material = material;
   }
 
   normal(pos) {
@@ -15,21 +15,24 @@ export default class Sphere {
   }
 
   intersect(ray) {
-    const eyeToCenter = Vector.subtract(this.position, ray.start);
-    const v = Vector.dotProduct(eyeToCenter, ray.dir);
-    let dist = 0;
+    const b = 2 * ray.direction.dot(ray.origin.subtract(this.center));
+    const rayToCenter = ray.origin.subtract(this.center);
+    const c = rayToCenter.dot(rayToCenter) - this.radius * this.radius;
+    const discriminant = b * b - 4 * c;
 
-    if (v >= 0) {
-      const eoDot = Vector.dotProduct(eyeToCenter, eyeToCenter);
-      const discriminant = this.size * this.size - (eoDot - v * v);
-      if (discriminant >= 0) {
-        dist = v - Math.sqrt(discriminant);
-      }
-    }
+    if (discriminant <= 0) return new Intersection(false);
 
-    if (dist === 0) {
-      return null;
-    }
-    return new Intersection(this, ray, dist);
+    let closestDistance = 0;
+    const distance1 = (-1 * b + Math.sqrt(discriminant)) / 2;
+    const distance2 = (-1 * b - Math.sqrt(discriminant)) / 2;
+
+    if (distance1 < 0 && distance2 < 0) return new Intersection(false);
+    if (distance2 < 0) closestDistance = distance1;
+    else closestDistance = Math.min(distance1, distance2);
+
+    const position = ray.at(closestDistance);
+    const normal = position.subtract(this.center).scalarDivide(this.radius);
+
+    return new Intersection(true, position, normal, ray, this.material);
   }
 }
