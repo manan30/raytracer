@@ -1,10 +1,7 @@
-import Camera from './Camera';
 import Color from './Color';
-import Plane from './Plane';
-import Sphere from './Sphere';
-import Vector from './Vector';
-import Light from './Light';
 import Ray from './Ray';
+import Scene from './Scene';
+import Vector from './Vector';
 
 /**
  * @class RayTracer
@@ -12,64 +9,7 @@ import Ray from './Ray';
 
 export default class RayTracer {
   constructor(height, width, context) {
-    this.scene = {
-      camera: new Camera(
-        new Vector(3.0, -5.0, 30.0),
-        new Vector(0.0, 0.0, 0.0),
-        75
-      ),
-      lights: [
-        new Light(new Vector(-5.0, 5.0, 5.0), new Color(0.4, 1.0, 0.8)),
-        new Light(new Vector(10.0, 5.0, -5.0), new Color(0.6, 0.2, 0.0)),
-      ],
-      objects: [
-        new Plane(
-          'plane',
-          new Vector(0.0, 1.0, 0.0),
-          new Color(0.9, 0.9, 0.9),
-          {
-            diffuse: (pos) => {
-              if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
-                return Color.white;
-              }
-              return Color.black;
-            },
-            specular: Color.white,
-            reflection: (pos) => {
-              if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
-                return 0.1;
-              }
-              return 0.7;
-            },
-            roughness: 150,
-          }
-        ),
-        new Sphere(
-          'sphere',
-          new Vector(0.0, 1.0, -0.25),
-          2.0,
-          new Color(0.4, 1.0, 0.8),
-          {
-            diffuse: Color.white,
-            specular: Color.grey,
-            reflection: () => 0.7,
-            roughness: 250,
-          }
-        ),
-        new Sphere(
-          'sphere',
-          new Vector(-3.0, 0.5, 1.5),
-          1.5,
-          new Color(0.6, 0.2, 0.0),
-          {
-            diffuse: Color.white,
-            specular: Color.grey,
-            reflection: () => 0.7,
-            roughness: 250,
-          }
-        ),
-      ],
-    };
+    this.scene = new Scene();
     this.height = height;
     this.width = width;
     this.context = context;
