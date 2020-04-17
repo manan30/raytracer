@@ -1,7 +1,6 @@
 import Color from './Color';
 import Ray from './Ray';
 import Scene from './Scene';
-import Vector from './Vector';
 
 /**
  * @class RayTracer
@@ -22,28 +21,36 @@ export default class RayTracer {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  performRefraction(direction, n1, n2, normal) {
+  getRefractVector(direction, normal, n1, n2) {
     const n = n1 / n2;
-    const c1 = direction.scalarMultiply(-1.0).dotProduct(normal);
-    const c2 = 1 - n * n * (1 - c1 * c1);
+    const cosI = normal.scalarMultiply(-1.0).dotProduct(direction);
+    const sinT2 = n * n * (1.0 - cosI * cosI);
 
-    let refractedRayDirection;
-    let TIR;
-    // total internal reflection occurs
-    if (c2 < 0) {
-      refractedRayDirection = direction;
-      TIR = true;
-    } else {
-      refractedRayDirection = direction
-        .scalarMultiply(n)
-        .add(normal.scalarMultiply(n * c1 - Math.sqrt(c2)));
-      TIR = false;
+    if (sinT2 > 1.0) {
+      return null;
     }
 
-    return {
-      refractedRayDirection,
-      TIR,
-    };
+    const cosT = Math.sqrt(1.0 - sinT2);
+    return direction
+      .scalarMultiply(n)
+      .add(normal.scalarMultiply(n * cosI - cosT));
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getReflectance(n1, n2, normal, direction) {
+    const n = n1 / n2;
+    const cosI = normal.scalarMultiply(-1.0).dotProduct(direction);
+    const sinT2 = n * n * (1.0 - cosI * cosI);
+
+    if (sinT2 > 1.0) {
+      // Total Internal Reflection.
+      return 1.0;
+    }
+
+    const cosT = Math.sqrt(1.0 - sinT2);
+    const r0rth = (n1 * cosI - n2 * cosT) / (n1 * cosI + n2 * cosT);
+    const rPar = (n2 * cosI - n1 * cosT) / (n2 * cosI + n1 * cosT);
+    return (r0rth * r0rth + rPar * rPar) / 2.0;
   }
 
   generateNaturalColor(direction, material, position, normal, depth) {
@@ -92,34 +99,27 @@ export default class RayTracer {
     }
 
     if (depth > 1 && material.isTransparent) {
-      let n1;
-      let n2;
+      const reflectivePercentage = this.getReflectance(
+        1.0,
+        0.8,
+        normal,
+        direction
+      );
 
-      // if ray is entering object
-      if (this.insideObject) {
-        n1 = 1.52;
-        n2 = 1; // index of air
+      const refractivePercentage = 1 - reflectivePercentage;
+
+      const refractedRay = this.getRefractVector(direction, normal, 1.0, 0.8);
+      let ray;
+
+      if (refractedRay) {
+        ray = new Ray(position, refractedRay);
       } else {
-        n1 = 1;
-        n2 = 1.52;
+        ray = new Ray(position, direction);
       }
 
-      const refractionResults = this.performRefraction(
-        direction,
-        n1,
-        n2,
-        normal
-      );
-      // console.log(refractionResults);
+      const incomingLight = this.trace(ray, depth - 1);
 
-      const refractedRay = new Ray(
-        position.add(normal),
-        refractionResults.refractedRayDirection
-      );
-      if (!refractionResults.TIR) this.insideObject = !this.insideObject;
-
-      const refractedColor = this.trace(refractedRay, depth - 1);
-      color.add(refractedColor.scalarMultiply(1.0));
+      color = color.add(incomingLight.scalarMultiply(0.8));
     }
 
     return color;
