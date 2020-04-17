@@ -15,7 +15,7 @@ export default class Plane {
       return new Intersection(false);
     }
 
-    const dist = this.position.dotProduct(ray.start) / -denom;
+    const dist = this.position.dotProduct(ray.start) / denom;
     const position = ray.at(dist);
 
     return new Intersection(true, position, this.position, ray, this.material);

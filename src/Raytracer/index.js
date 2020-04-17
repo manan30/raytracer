@@ -33,12 +33,11 @@ export default class RayTracer {
         directionToLight
       );
       const shadowRayIntersection = this.spawnShadowRay(shadowRay);
-
       if (
         shadowRayIntersection === null ||
         (!shadowRayIntersection.isHit &&
           shadowRayIntersection.distance > lights[i].distance(position) &&
-          directionToLight.dot(normal) > 0)
+          directionToLight.dotProduct(normal) > 0)
       ) {
         const intensity = lights[i].intensityAt(position);
         const genColor = intensity.multiply(
@@ -48,22 +47,21 @@ export default class RayTracer {
         );
         color = color.add(genColor);
       }
+    }
 
-      // recursively draw reflections
-      if (depth > 1 && material.isSpecular) {
-        // reflect direction off of surface normal
-        const reflectedVector = direction.subtract(
-          normal.scalarMultiply(2 * normal.dotProduct(direction))
-        );
-        const reflectedRay = new Ray(
-          position.add(normal.scalarMultiply(0.00001)),
-          reflectedVector
-        );
+    if (depth > 1 && material.isSpecular) {
+      const reflectedVector = direction.subtract(
+        normal.scalarMultiply(2 * normal.dotProduct(direction))
+      );
+      const reflectedRay = new Ray(position.add(normal), reflectedVector);
 
-        // get light from reflections
-        const incomingLight = this.trace(reflectedRay, depth - 1);
-        color = color.add(incomingLight.multiply(material.specular));
-      }
+      const incomingLight = this.trace(reflectedRay, depth + 1);
+
+      color = color.add(
+        incomingLight
+          .scalarMultiply(material.reflection)
+          .multiply(material.specular)
+      );
     }
 
     return color;
@@ -100,11 +98,11 @@ export default class RayTracer {
     const direction = intersection.ray.dir;
     const { position, normal, material } = intersection;
 
-    const naturalColor = Color.background().add(
+    const color = Color.background().add(
       this.generateNaturalColor(direction, material, position, normal, depth)
     );
 
-    return naturalColor;
+    return color;
   }
 
   trace(ray, depth) {
@@ -121,23 +119,21 @@ export default class RayTracer {
     const { camera } = this.scene;
 
     const getPoint = (x, y) => {
-      const recenterX = (x1) => (x1 - this.width / 2.0) / 2.0 / this.width;
-      const recenterY = (y1) => -(y1 - this.height / 2.0) / 2.0 / this.height;
-      return camera.n
-        .add(
-          camera.u
-            .scalarMultiply(recenterX(x))
-            .add(camera.v.scalarMultiply(recenterY(y)))
-        )
+      const xx =
+        (2 * ((x + 0.5) * (1 / this.width)) - 1) *
+        camera.angle *
+        camera.aspectRatio;
+      const yy = (1 - 2 * ((y + 0.5) * (1 / this.height))) * camera.angle;
+      return camera.forward
+        .add(camera.right.scalarMultiply(xx).add(camera.up.scalarMultiply(yy)))
         .normalize();
     };
 
     for (let x = 0; x < this.width; x += 1) {
       for (let y = 0; y < this.height; y += 1) {
         const ray = new Ray(camera.position, getPoint(x, y));
-        const color = this.trace(ray, 0).toDrawingColor();
 
-        // console.log(color);
+        const color = this.trace(ray, 5).toDrawingColor();
 
         this.context.fillStyle = `rgb(${color.r},${color.g}, ${color.b})`;
         this.context.fillRect(x, y, 1, 1);

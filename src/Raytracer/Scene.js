@@ -11,43 +11,50 @@ export default class Scene {
     this.camera = new Camera(
       new Vector(3.0, -5.0, 30.0),
       new Vector(0.0, 0.0, 0.0),
-      75
+      60,
+      2056 / 2056
     );
     this.lights = [
-      new Light(new Vector(-5.0, 5.0, 5.0), new Color(0.4, 1.0, 0.8)),
-      new Light(new Vector(10.0, 5.0, -5.0), new Color(0.6, 0.2, 0.0)),
+      new Light(new Vector(-5.0, 5.0, 5.0), new Color(75, 75, 75)),
+      new Light(new Vector(10.0, 5.0, -5.0), new Color(25, 25, 25)),
     ];
     this.objects = [
       new Plane(
         'plane',
         new Vector(0.0, 1.0, 0.0),
         new Color(0.9, 0.9, 0.9),
-        new Material(
-          (pos) => {
-            if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
-              return Color.white();
-            }
-            return Color.black();
-          },
-          Color.white(),
-          false,
-          0.0,
-          150
-        )
+        new Material((pos) => {
+          if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
+            return Color.white();
+          }
+          return Color.black();
+        })
       ),
       new Sphere(
         'sphere',
         new Vector(0.0, 1.0, -0.25),
         2.0,
         new Color(0.4, 1.0, 0.8),
-        new Material(() => Color.white(), Color.grey(), true, 0.7, 250)
+        new Material(
+          () => new Color(0.4, 1.0, 0.8),
+          undefined,
+          undefined,
+          undefined,
+          true,
+          1.0
+        )
       ),
       new Sphere(
         'sphere',
-        new Vector(-3.0, 0.5, 1.5),
+        new Vector(-4.0, 0.5, 1.5),
         1.5,
         new Color(0.6, 0.2, 0.0),
-        new Material(() => Color.white(), Color.grey(), true, 0.0, 250)
+        new Material(
+          () => new Color(0.6, 0.2, 0.0),
+          new Color(1.0, 1.0, 1.0),
+          true,
+          0.7
+        )
       ),
     ];
   }

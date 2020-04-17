@@ -10,10 +10,11 @@ export default class Sphere {
   }
 
   intersect(ray) {
-    const b = 2 * ray.dir.dotProduct(ray.start.subtract(this.position));
     const rayToCenter = ray.start.subtract(this.position);
+    const b = 2 * ray.dir.dotProduct(rayToCenter);
+    const a = ray.dir.dotProduct(ray.dir);
     const c = rayToCenter.dotProduct(rayToCenter) - this.size * this.size;
-    const discriminant = b * b - 4 * c;
+    const discriminant = b * b - 4 * a * c;
 
     if (discriminant <= 0) return new Intersection(false);
 
