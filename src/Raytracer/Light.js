@@ -8,12 +8,12 @@ export default class Light {
   }
 
   distance(point) {
-    this.position.distance(point);
+    return this.position.distance(point);
   }
 
   intensityAt(point) {
     const distance = this.distance(point);
-    const intensity = this.power.scalarDivide(
+    const intensity = this.color.scalarDivide(
       this.attenuation.x +
         this.attenuation.y * distance +
         this.attenuation.z * distance * distance
