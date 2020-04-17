@@ -16,15 +16,35 @@ export default class Sphere {
     const c = rayToCenter.dotProduct(rayToCenter) - this.size * this.size;
     const discriminant = b * b - 4 * a * c;
 
-    if (discriminant <= 0) return new Intersection(false);
-
     let closestDistance = 0;
-    const distance1 = (-1 * b + Math.sqrt(discriminant)) / 2;
-    const distance2 = (-1 * b - Math.sqrt(discriminant)) / 2;
+    let distance1;
+    let distance2;
 
-    if (distance1 < 0 && distance2 < 0) return new Intersection(false);
-    if (distance2 < 0) closestDistance = distance1;
-    else closestDistance = Math.min(distance1, distance2);
+    if (discriminant < 0) return new Intersection(false);
+
+    if (discriminant === 0) {
+      distance1 = (-0.5 * b) / a;
+    } else {
+      const q =
+        b > 0
+          ? -0.5 * (b + Math.sqrt(discriminant))
+          : -0.5 * (b - Math.sqrt(discriminant));
+      distance1 = q / a;
+      distance2 = c / q;
+    }
+
+    if (distance1 > distance2) {
+      const temp = distance1;
+      distance1 = distance2;
+      distance2 = temp;
+    }
+
+    if (distance1 < 0) {
+      distance1 = distance2;
+      if (distance1 < 0) return new Intersection(false);
+    }
+
+    closestDistance = distance1;
 
     const position = ray.at(closestDistance);
     const normal = position.subtract(this.position).scalarDivide(this.size);
