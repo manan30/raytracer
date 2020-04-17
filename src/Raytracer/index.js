@@ -1,7 +1,6 @@
 import Color from './Color';
 import Ray from './Ray';
 import Scene from './Scene';
-import Vector from './Vector';
 
 /**
  * @class RayTracer
@@ -18,7 +17,9 @@ export default class RayTracer {
   spawnShadowRay(ray) {
     const intersection = this.intersectScene(ray);
 
-    return intersection.isHit ? intersection.distance : undefined;
+    return intersection !== null && intersection.isHit
+      ? intersection.distance
+      : undefined;
   }
 
   generateNaturalColor(material, position, normal, reflectionDir) {
@@ -33,19 +34,19 @@ export default class RayTracer {
       }
       const illum = livec.dotProduct(normal);
       const lcolor =
-        illum > 0 ? light.color.scalarMultiply(illum) : new Color().black;
-      const specular = Vector.dotProduct(livec, reflectionDir.normalize());
+        illum > 0 ? light.color.scalarMultiply(illum) : Color.black();
+      const specular = livec.dotProduct(reflectionDir.normalize());
       const scolor =
         specular > 0
           ? light.color.scalarMultiply(specular ** material.roughness)
-          : Color.background;
-      return acc.plus(
+          : Color.background();
+      return acc.add(
         lcolor
-          .scalarMultiply(material.diffuse(position))
-          .add(material.specular.multiply(scolor))
+          .multiply(material.diffuse(position))
+          .add(scolor.multiply(material.specular))
       );
     };
-    return this.scene.lights.reduce(lighting, Color.background);
+    return this.scene.lights.reduce(lighting, Color.background());
   }
 
   generateReflectionColor(
@@ -56,20 +57,18 @@ export default class RayTracer {
     depth
   ) {
     const ray = new Ray(position, reflectionDirection);
-    return this.trace(ray, depth + 1).scalarMultiply(
-      material.reflection(position)
-    );
+    return this.trace(ray, depth + 1).scalarMultiply(material.reflection);
   }
 
   intersectScene(ray) {
     let closest = +Infinity;
-    let closestIntersection;
+    let closestIntersection = null;
     for (let i = 0; i < this.scene.objects.length; i += 1) {
       const object = this.scene.objects[i];
 
       const intersection = object.intersect(ray);
 
-      if (intersection !== null && intersection.distance < closest) {
+      if (intersection.isHit && intersection.distance < closest) {
         closestIntersection = intersection;
         closest = intersection.distance;
       }
@@ -84,13 +83,13 @@ export default class RayTracer {
       normal.scalarMultiply(normal.dotProduct(direction)).scalarMultiply(2)
     );
 
-    const naturalColor = Color.background.add(
+    const naturalColor = Color.background().add(
       this.generateNaturalColor(material, position, normal, reflectionDirection)
     );
 
     const reflectedColor =
       depth >= 5
-        ? new Color().grey
+        ? Color.grey()
         : this.generateReflectionColor(
             material,
             position,
@@ -100,18 +99,18 @@ export default class RayTracer {
           );
 
     return naturalColor.add(reflectedColor);
+    // return naturalColor;
   }
 
   trace(ray, depth) {
+    const color = new Color(0, 0, 0);
     const intersection = this.intersectScene(ray);
 
     if (!intersection || !intersection.isHit) {
-      return new Color(Color.background).toDrawingColor();
+      return Color.black();
     }
 
-    return new Color(
-      this.globalIllumination(intersection, depth)
-    ).toDrawingColor();
+    return this.globalIllumination(intersection, depth);
   }
 
   render() {
@@ -131,9 +130,10 @@ export default class RayTracer {
 
     for (let x = 0; x < this.width; x += 1) {
       for (let y = 0; y < this.height; y += 1) {
-        const color = this.trace(new Ray(camera.position, getPoint(x, y)), 0);
+        const ray = new Ray(camera.position, getPoint(x, y));
+        const color = this.trace(ray, 0).toDrawingColor();
 
-        console.log(color);
+        // console.log(color);
 
         this.context.fillStyle = `rgb(${color.r},${color.g}, ${color.b})`;
         this.context.fillRect(x, y, 1, 1);

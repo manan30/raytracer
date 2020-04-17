@@ -3,6 +3,7 @@ export default class Intersection {
     this.isHit = isHit;
     this.position = position;
     this.normal = normal;
+    this.ray = ray;
     this.material = material;
     this.distance = this.isHit
       ? position.distance(ray.start)

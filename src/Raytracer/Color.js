@@ -6,23 +6,23 @@ export default class Color {
   }
 
   static black() {
-    return Color(0.0, 0.0, 0.0);
+    return new Color(0.0, 0.0, 0.0);
   }
 
   static blue() {
-    return Color(0.0, 0.3, 0.6);
+    return new Color(0.0, 0.3, 0.6);
   }
 
   static white() {
-    return Color(1.0, 1.0, 1.0);
+    return new Color(1.0, 1.0, 1.0);
   }
 
   static grey() {
-    return Color(0.5, 0.5, 0.5);
+    return new Color(0.5, 0.5, 0.5);
   }
 
   static background() {
-    return Color.black;
+    return Color.black();
   }
 
   scalarMultiply(factor) {

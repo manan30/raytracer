@@ -17,7 +17,7 @@ function MainScene({ canvasRef }) {
     }
 
     camera.lookAt(0, 0, 0);
-    scene.children.forEach(obj => camera.worldToLocal(obj.position));
+    scene.children.forEach((obj) => camera.worldToLocal(obj.position));
   }, [camera, scene]);
 
   useEffect(() => {
@@ -66,7 +66,7 @@ function MainScene({ canvasRef }) {
 }
 
 MainScene.propTypes = {
-  canvasRef: PropTypes.objectOf(PropTypes.any).isRequired
+  canvasRef: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default MainScene;

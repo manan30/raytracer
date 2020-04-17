@@ -25,11 +25,11 @@ export default class Scene {
         new Material(
           (pos) => {
             if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
-              return Color.white;
+              return Color.white();
             }
-            return Color.black;
+            return Color.black();
           },
-          Color.white,
+          Color.white(),
           0.0,
           150
         )
@@ -39,14 +39,14 @@ export default class Scene {
         new Vector(0.0, 1.0, -0.25),
         2.0,
         new Color(0.4, 1.0, 0.8),
-        new Material(() => Color.white, Color.grey, 0.7, 250)
+        new Material(() => Color.white(), Color.grey(), 0.7, 250)
       ),
       new Sphere(
         'sphere',
         new Vector(-3.0, 0.5, 1.5),
         1.5,
         new Color(0.6, 0.2, 0.0),
-        new Material(() => Color.white, Color.grey, 0.0, 250)
+        new Material(() => Color.white(), Color.grey(), 0.0, 250)
       ),
     ];
   }

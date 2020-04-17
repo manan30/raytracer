@@ -6,10 +6,11 @@ export default class Camera {
     this.lookAt = lookAt;
     this.fov = fov;
 
-    this.n = new Vector(this.lookAt.subtract(this.position)).normalize();
-    this.u = new Vector(
-      this.n.crossProduct(new Vector(0.0, -1.0, 0.0)).normalize()
-    ).scalarMultiply(1.5);
+    this.n = this.lookAt.subtract(this.position).normalize();
+    this.u = this.n
+      .crossProduct(new Vector(0.0, -1.0, 0.0))
+      .normalize()
+      .scalarMultiply(1.5);
     this.v = this.n.crossProduct(this.u);
   }
 }
