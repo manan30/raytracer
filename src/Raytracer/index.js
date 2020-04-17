@@ -1,6 +1,7 @@
 import Color from './Color';
 import Ray from './Ray';
 import Scene from './Scene';
+import Vector from './Vector';
 
 /**
  * @class RayTracer
@@ -12,11 +13,37 @@ export default class RayTracer {
     this.height = height;
     this.width = width;
     this.context = context;
+    this.inside = true;
   }
 
   spawnShadowRay(ray) {
     const intersection = this.intersectScene(ray);
     return intersection;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  performRefraction(direction, n1, n2, normal) {
+    const n = n1 / n2;
+    const c1 = direction.scalarMultiply(-1.0).dotProduct(normal);
+    const c2 = 1 - n * n * (1 - c1 * c1);
+
+    let refractedRayDirection;
+    let TIR;
+    // total internal reflection occurs
+    if (c2 < 0) {
+      refractedRayDirection = direction;
+      TIR = true;
+    } else {
+      refractedRayDirection = direction
+        .scalarMultiply(n)
+        .add(normal.scalarMultiply(n * c1 - Math.sqrt(c2)));
+      TIR = false;
+    }
+
+    return {
+      refractedRayDirection,
+      TIR,
+    };
   }
 
   generateNaturalColor(direction, material, position, normal, depth) {
@@ -55,13 +82,44 @@ export default class RayTracer {
       );
       const reflectedRay = new Ray(position.add(normal), reflectedVector);
 
-      const incomingLight = this.trace(reflectedRay, depth + 1);
+      const incomingLight = this.trace(reflectedRay, depth - 1);
 
       color = color.add(
         incomingLight
           .scalarMultiply(material.reflection)
           .multiply(material.specular)
       );
+    }
+
+    if (depth > 1 && material.isTransparent) {
+      let n1;
+      let n2;
+
+      // if ray is entering object
+      if (this.insideObject) {
+        n1 = 1.52;
+        n2 = 1; // index of air
+      } else {
+        n1 = 1;
+        n2 = 1.52;
+      }
+
+      const refractionResults = this.performRefraction(
+        direction,
+        n1,
+        n2,
+        normal
+      );
+      // console.log(refractionResults);
+
+      const refractedRay = new Ray(
+        position.add(normal),
+        refractionResults.refractedRayDirection
+      );
+      if (!refractionResults.TIR) this.insideObject = !this.insideObject;
+
+      const refractedColor = this.trace(refractedRay, depth - 1);
+      color.add(refractedColor.scalarMultiply(1.0));
     }
 
     return color;

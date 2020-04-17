@@ -4,14 +4,14 @@ export default class Material {
     specular,
     isSpecular = false,
     reflection = 0.0,
-    isRefracted = false,
+    isTransparent = false,
     refraction = 0.0
   ) {
     this.diffuse = diffuse;
     this.specular = specular;
     this.isSpecular = isSpecular;
     this.reflection = reflection;
-    this.isRefracted = isRefracted;
+    this.isTransparent = isTransparent;
     this.refraction = refraction;
   }
 }
