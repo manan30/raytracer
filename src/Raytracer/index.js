@@ -21,39 +21,34 @@ export default class RayTracer {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getRefractVector(direction, normal, n1, n2) {
-    const n = n1 / n2;
-    const cosI = normal.scalarMultiply(-1.0).dotProduct(direction);
-    const sinT2 = n * n * (1.0 - cosI * cosI);
+  getRefractedRay(direction, normal, n1, n2) {
+    let c1 = normal.dotProduct(direction);
+    let eta1 = n1;
+    let eta2 = n2;
 
-    if (sinT2 > 1.0) {
-      return null;
+    let refractedNormal = normal;
+
+    if (c1 < 0) {
+      c1 = -c1;
+    } else {
+      refractedNormal = refractedNormal.scalarMultiply(-1);
+      const temp = eta1;
+      eta1 = eta2;
+      eta2 = temp;
     }
 
-    const cosT = Math.sqrt(1.0 - sinT2);
-    return direction
-      .scalarMultiply(n)
-      .add(normal.scalarMultiply(n * cosI - cosT));
+    const eta = eta1 / eta2;
+    const c2 = Math.sqrt(1 - eta ** 2 * (1 - c1 ** 2));
+
+    return c2 < 0
+      ? null
+      : direction
+          .scalarMultiply(eta)
+          .add(refractedNormal.scalarMultiply(eta * c1 - c2))
+          .normalize();
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  getReflectance(n1, n2, normal, direction) {
-    const n = n1 / n2;
-    const cosI = normal.scalarMultiply(-1.0).dotProduct(direction);
-    const sinT2 = n * n * (1.0 - cosI * cosI);
-
-    if (sinT2 > 1.0) {
-      // Total Internal Reflection.
-      return 1.0;
-    }
-
-    const cosT = Math.sqrt(1.0 - sinT2);
-    const r0rth = (n1 * cosI - n2 * cosT) / (n1 * cosI + n2 * cosT);
-    const rPar = (n2 * cosI - n1 * cosT) / (n2 * cosI + n1 * cosT);
-    return (r0rth * r0rth + rPar * rPar) / 2.0;
-  }
-
-  generateNaturalColor(direction, material, position, normal, depth) {
+  illuminate(direction, material, position, normal, depth) {
     let color = new Color(0, 0, 0);
 
     const { lights } = this.scene;
@@ -99,41 +94,23 @@ export default class RayTracer {
     }
 
     if (depth > 1 && material.isTransparent) {
-      const reflectivePercentage = this.getReflectance(
-        1.0,
-        0.8,
-        normal,
-        direction
-      );
+      const refractedVector = this.getRefractedRay(direction, normal, 1.5, 1.0);
 
-      const refractivePercentage = 1 - reflectivePercentage;
+      if (refractedVector !== null) {
+        const outside = direction.dotProduct(normal) < 0;
+        const bias = normal.scalarMultiply(0.0001);
+        const refractedRayDirection = outside
+          ? position.add(bias)
+          : position.subtract(bias);
+        const refractedRay = new Ray(refractedRayDirection, refractedVector);
 
-      const refractedRay = this.getRefractVector(direction, normal, 1.0, 0.8);
-      let ray;
+        const incomingLight = this.trace(refractedRay, depth - 1);
 
-      if (refractedRay) {
-        ray = new Ray(position, refractedRay);
-      } else {
-        ray = new Ray(position, direction);
+        color = color.add(incomingLight);
       }
-
-      const incomingLight = this.trace(ray, depth - 1);
-
-      color = color.add(incomingLight.scalarMultiply(0.8));
     }
 
     return color;
-  }
-
-  generateReflectionColor(
-    material,
-    position,
-    normal,
-    reflectionDirection,
-    depth
-  ) {
-    const ray = new Ray(position, reflectionDirection);
-    return this.trace(ray, depth + 1).scalarMultiply(material.reflection);
   }
 
   intersectScene(ray) {
@@ -152,17 +129,6 @@ export default class RayTracer {
     return closestIntersection;
   }
 
-  globalIllumination(intersection, depth) {
-    const direction = intersection.ray.dir;
-    const { position, normal, material } = intersection;
-
-    const color = Color.background().add(
-      this.generateNaturalColor(direction, material, position, normal, depth)
-    );
-
-    return color;
-  }
-
   trace(ray, depth) {
     const intersection = this.intersectScene(ray);
 
@@ -170,7 +136,13 @@ export default class RayTracer {
       return Color.black();
     }
 
-    return this.globalIllumination(intersection, depth);
+    return this.illuminate(
+      intersection.ray.dir,
+      intersection.material,
+      intersection.position,
+      intersection.normal,
+      depth
+    );
   }
 
   render() {
