@@ -47,7 +47,10 @@ export default class Sphere {
     closestDistance = distance1;
 
     const position = ray.at(closestDistance);
-    const normal = position.subtract(this.position).scalarDivide(this.size);
+    const normal = position
+      .subtract(this.position)
+      .scalarDivide(this.size)
+      .normalize();
 
     return new Intersection(true, position, normal, ray, this.material);
   }

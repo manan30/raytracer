@@ -14,6 +14,6 @@ export default class Camera {
     this.right = this.forward
       .crossProduct(new Vector(0.0, -1.0, 0.0))
       .normalize();
-    this.up = this.forward.crossProduct(this.right).normalize();
+    this.up = this.forward.crossProduct(this.right);
   }
 }

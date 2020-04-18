@@ -78,7 +78,14 @@ export default class RayTracer {
           .normalize();
   }
 
-  calculateReflectedLight(direction, normal, position, depth, reflectionCoeff) {
+  calculateReflectedLight(
+    direction,
+    normal,
+    position,
+    depth,
+    reflectionCoeff,
+    specularHighlight
+  ) {
     const reflectedVector = direction
       .subtract(normal.scalarMultiply(2 * direction.dotProduct(normal)))
       .normalize();
@@ -86,7 +93,9 @@ export default class RayTracer {
 
     const incomingLight = this.trace(reflectedRay, depth - 1);
 
-    return incomingLight.scalarMultiply(reflectionCoeff);
+    return incomingLight
+      .scalarMultiply(reflectionCoeff)
+      .multiply(specularHighlight);
   }
 
   calculateRefractedLight(direction, normal, position, depth) {
@@ -104,7 +113,9 @@ export default class RayTracer {
         const refractedRay = new Ray(refractedRayDirection, refractedVector);
 
         color = color.add(
-          this.trace(refractedRay, depth - 1).scalarMultiply(fresnel)
+          this.trace(refractedRay, depth - 1)
+            .scalarMultiply(fresnel)
+            .multiply(Color.white())
         );
       }
     }
@@ -133,10 +144,12 @@ export default class RayTracer {
       const directionToLight = lights[i].position
         .subtract(position)
         .normalize();
+
       const shadowRay = new Ray(
         position.add(normal.scalarMultiply(0.00001)),
         directionToLight
       );
+
       const shadowRayIntersection = this.spawnShadowRay(shadowRay);
       if (
         shadowRayIntersection === null ||
@@ -145,6 +158,7 @@ export default class RayTracer {
           directionToLight.dotProduct(normal) > 0)
       ) {
         const intensity = lights[i].intensityAt(position);
+
         const genColor = intensity.multiply(
           material
             .diffuse(position)
@@ -161,7 +175,8 @@ export default class RayTracer {
           normal,
           position,
           depth,
-          material.reflection
+          material.reflection,
+          material.specular
         )
       );
     }
