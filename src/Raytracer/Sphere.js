@@ -1,11 +1,9 @@
 import Intersection from './Intersection';
 
 export default class Sphere {
-  constructor(name, position, size, color, material) {
-    this.name = name;
+  constructor(position, size, material) {
     this.position = position;
     this.size = size;
-    this.color = color;
     this.material = material;
   }
 

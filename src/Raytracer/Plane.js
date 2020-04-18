@@ -1,10 +1,8 @@
 import Intersection from './Intersection';
 
 export default class Plane {
-  constructor(name, position, color, material) {
-    this.name = name;
+  constructor(position, material) {
     this.position = position;
-    this.color = color;
     this.material = material;
   }
 

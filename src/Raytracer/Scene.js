@@ -15,46 +15,24 @@ export default class Scene {
       2056 / 2056
     );
     this.lights = [
-      new Light(new Vector(-5.0, 5.0, 5.0), new Color(75, 75, 75)),
-      new Light(new Vector(10.0, 5.0, -5.0), new Color(25, 25, 25)),
+      new Light('ambient', undefined, 0.2),
+      new Light('point', new Vector(2.0, 1.0, 0.0), 0.6),
+      new Light('directional', new Vector(1.0, 4.0, 4.0), 0.2),
     ];
     this.objects = [
       new Plane(
-        'plane',
         new Vector(0.0, 1.0, 0.0),
-        new Color(0.9, 0.9, 0.9),
-        new Material((pos) => {
-          if ((Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0) {
-            return Color.white();
-          }
-          return Color.black();
-        })
+        new Material(new Color(0.9, 0.9, 0.9), undefined, 0.0, 0.0)
       ),
       new Sphere(
-        'sphere',
         new Vector(0.0, 1.0, -0.25),
         2.0,
-        new Color(0.4, 1.0, 0.8),
-        new Material(
-          () => new Color(0.4, 1.0, 0.8),
-          undefined,
-          undefined,
-          undefined,
-          true,
-          1.0
-        )
+        new Material(new Color(0.65, 0.77, 0.97), undefined, 1.0, 0.0)
       ),
       new Sphere(
-        'sphere',
         new Vector(-4.0, 0.5, 1.5),
         1.5,
-        new Color(0.6, 0.2, 0.0),
-        new Material(
-          () => new Color(0.6, 0.2, 0.0),
-          new Color(1.0, 1.0, 1.0),
-          true,
-          0.7
-        )
+        new Material(new Color(0.6, 0.2, 0.0), undefined, 1.0, 0.0)
       ),
     ];
   }
