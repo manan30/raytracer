@@ -1,22 +1,17 @@
 import Vector from './Vector';
 
 export default class Camera {
-  constructor(
-    position: Vector,
-    lookAt: Vector,
-    fov: Number,
-    aspectRatio: Number
-  ) {
+  constructor(position: Vector, lookAt: Vector) {
     this.position = position;
     this.lookAt = lookAt;
-    this.fov = fov;
+    this.fov = 60;
 
-    this.angle = Math.tan((Math.PI * 0.5 * fov) / 180);
+    this.angle = Math.tan((Math.PI * 0.5 * this.fov) / 180);
 
-    this.aspectRatio = aspectRatio;
+    this.aspectRatio = 1.0;
 
     this.forward = this.lookAt.subtract(this.position).normalize();
-    this.right = new Vector(0.0, 1.0, 0.0)
+    this.right = new Vector(0.0, -1.0, 0.0)
       .crossProduct(this.forward)
       .normalize();
     this.up = this.forward.crossProduct(this.right);

@@ -1,9 +1,9 @@
 import Vector from './Vector';
 
 export default class Ray {
-  constructor(start: Vector, dir: Vector) {
-    this.start = start;
-    this.dir = dir;
+  constructor(origin: Vector, direction: Vector) {
+    this.origin = origin;
+    this.direction = direction;
   }
 
   /**
@@ -12,6 +12,6 @@ export default class Ray {
    * @return {Vector} {description}
    */
   at(factor) {
-    return this.start.add(this.dir.scalarMultiply(factor));
+    return this.origin.add(this.direction.scalarMultiply(factor)).normalize();
   }
 }

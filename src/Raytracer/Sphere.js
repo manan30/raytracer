@@ -1,6 +1,7 @@
 import Intersection from './Intersection';
 import Vector from './Vector';
 import Material from './Material';
+import Ray from './Ray';
 
 export default class Sphere {
   constructor(position: Vector, size: Number, material: Material) {
@@ -15,9 +16,9 @@ export default class Sphere {
    * @return {Intersection} {description}
    */
   intersect(ray) {
-    const rayToCenter = ray.start.subtract(this.position);
-    const b = 2 * ray.dir.dotProduct(rayToCenter);
-    const a = ray.dir.dotProduct(ray.dir);
+    const rayToCenter = ray.origin.subtract(this.position);
+    const b = 2 * ray.direction.dotProduct(rayToCenter);
+    const a = ray.direction.dotProduct(ray.direction);
     const c = rayToCenter.dotProduct(rayToCenter) - this.size * this.size;
     let discriminant = b * b - 4 * a * c;
 
@@ -50,7 +51,7 @@ export default class Sphere {
 
     closestDistance = distance1;
 
-    const point = ray.at(closestDistance).normalize();
+    const point = ray.at(closestDistance);
 
     // Normal needs to be flipped if this is a refractive ray.
     // if (ray.direction.dot(normal) > 0) {

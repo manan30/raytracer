@@ -40,7 +40,7 @@ export default class Vector {
   crossProduct(vector) {
     return new Vector(
       this.y * vector.z - this.z * vector.y,
-      this.z * vector.x - this.x * vector.z,
+      this.x * vector.z - this.z * vector.x,
       this.x * vector.y - this.y * vector.x
     );
   }
@@ -72,15 +72,20 @@ export default class Vector {
   }
 
   /**
+   * @function {function distance}
+   * @param  {Vector} vector {description}
+   * @return {Number} {description}
+   */
+  distance(vector) {
+    return vector.subtract(this).length();
+  }
+
+  /**
    * @function {function normalize}
    * @return {Vector} {description}
    */
   normalize() {
-    const magnitude = this.length();
-    return new Vector(
-      this.x / magnitude,
-      this.y / magnitude,
-      this.z / magnitude
-    );
+    const length = this.length();
+    return this.scalarDivide(length);
   }
 }

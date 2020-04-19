@@ -16,7 +16,7 @@ export default class Intersection {
     this.ray = ray;
     this.material = material;
     this.distance = this.isHit
-      ? point.distance(ray.start)
+      ? point.distance(ray.origin)
       : Number.MAX_SAFE_INTEGER;
   }
 }
