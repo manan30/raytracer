@@ -1,8 +1,21 @@
+import Color from './Color';
+
 export default class Material {
-  constructor(surfaceColor, emissionColor, transparency, reflection) {
+  constructor(
+    surfaceColor: Color,
+    ambientColor: Color,
+    ambientConstant: Number,
+    diffuseColor: Color,
+    diffuseConstant: Number,
+    specularColor: Color,
+    specularConstant: Number
+  ) {
     this.surfaceColor = surfaceColor;
-    this.emissionColor = emissionColor;
-    this.transparency = transparency;
-    this.reflection = reflection;
+    this.ambientColor = ambientColor;
+    this.ambientConstant = ambientConstant;
+    this.diffuseColor = diffuseColor;
+    this.diffuseConstant = diffuseConstant;
+    this.specularColor = specularColor;
+    this.specularConstant = specularConstant;
   }
 }

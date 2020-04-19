@@ -1,32 +1,38 @@
 import Intersection from './Intersection';
+import Vector from './Vector';
+import Material from './Material';
 
 export default class Sphere {
-  constructor(position, size, material) {
+  constructor(position: Vector, size: Number, material: Material) {
     this.position = position;
     this.size = size;
     this.material = material;
   }
 
+  /**
+   * @function {function intersect}
+   * @param  {Ray} ray {description}
+   * @return {Intersection} {description}
+   */
   intersect(ray) {
     const rayToCenter = ray.start.subtract(this.position);
     const b = 2 * ray.dir.dotProduct(rayToCenter);
     const a = ray.dir.dotProduct(ray.dir);
     const c = rayToCenter.dotProduct(rayToCenter) - this.size * this.size;
-    const discriminant = b * b - 4 * a * c;
-
-    let closestDistance = 0;
-    let distance1;
-    let distance2;
+    let discriminant = b * b - 4 * a * c;
 
     if (discriminant < 0) return new Intersection(false);
+
+    discriminant = Math.sqrt(discriminant);
+
+    let closestDistance = 0;
+    let distance1 = 0.0;
+    let distance2 = 0.0;
 
     if (discriminant === 0) {
       distance1 = (-0.5 * b) / a;
     } else {
-      const q =
-        b > 0
-          ? -0.5 * (b + Math.sqrt(discriminant))
-          : -0.5 * (b - Math.sqrt(discriminant));
+      const q = b > 0 ? 0.5 * (-b + discriminant) : 0.5 * (-b - discriminant);
       distance1 = q / a;
       distance2 = c / q;
     }
@@ -44,12 +50,15 @@ export default class Sphere {
 
     closestDistance = distance1;
 
-    const position = ray.at(closestDistance);
-    const normal = position
-      .subtract(this.position)
-      .scalarDivide(this.size)
-      .normalize();
+    const point = ray.at(closestDistance).normalize();
 
-    return new Intersection(true, position, normal, ray, this.material);
+    // Normal needs to be flipped if this is a refractive ray.
+    // if (ray.direction.dot(normal) > 0) {
+    //   normal *= -1;
+    // }
+
+    const normal = point.subtract(this.position).normalize();
+
+    return new Intersection(true, point, normal, ray, this.material);
   }
 }

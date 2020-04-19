@@ -1,11 +1,18 @@
 import Intersection from './Intersection';
+import Vector from './Vector';
+import Material from './Material';
 
 export default class Plane {
-  constructor(position, material) {
+  constructor(position: Vector, material: Material) {
     this.position = position;
     this.material = material;
   }
 
+  /**
+   * @function {function intersect}
+   * @param  {Ray} ray {description}
+   * @return {Intersection} {description}
+   */
   intersect(ray) {
     const denom = this.position.dotProduct(ray.dir);
 
@@ -14,8 +21,14 @@ export default class Plane {
     }
 
     const dist = this.position.dotProduct(ray.start) / denom;
-    const position = ray.at(dist);
+    const point = ray.at(dist).normalize();
 
-    return new Intersection(true, position, this.position, ray, this.material);
+    return new Intersection(
+      true,
+      point,
+      this.position.normalize(),
+      ray,
+      this.material
+    );
   }
 }

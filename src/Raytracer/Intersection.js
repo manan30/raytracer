@@ -1,12 +1,22 @@
+import Vector from './Vector';
+import Ray from './Ray';
+import Material from './Material';
+
 export default class Intersection {
-  constructor(isHit, position, normal, ray, material) {
+  constructor(
+    isHit: Boolean,
+    point: Vector,
+    normal: Vector,
+    ray: Ray,
+    material: Material
+  ) {
     this.isHit = isHit;
-    this.position = position;
+    this.point = point;
     this.normal = normal;
     this.ray = ray;
     this.material = material;
     this.distance = this.isHit
-      ? position.distance(ray.start)
+      ? point.distance(ray.start)
       : Number.MAX_SAFE_INTEGER;
   }
 }
