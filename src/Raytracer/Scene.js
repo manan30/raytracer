@@ -13,24 +13,14 @@ export default class Scene {
       new Vector(0.0, 0.0, 0.0)
     );
     this.lights = [
-      new Light(
-        'point',
-        new Vector(-50.0, 20.0, 5.0),
-        new Color(0.4, 1.0, 0.8),
-        3
-      ),
-      new Light(
-        'point',
-        new Vector(100.0, 30.0, -15.0),
-        new Color(0.6, 0.2, 0.0),
-        3
-      ),
-      new Light(
-        'point',
-        new Vector(50.0, 45.0, -60.0),
-        new Color(0.69, 0.21, 0.73),
-        5
-      ),
+      new Light('point', new Vector(-5.0, 5.0, 5.0), new Color(75, 75, 75), 3),
+      new Light('point', new Vector(10.0, 5.0, -5.0), new Color(25, 25, 25), 3),
+      // new Light(
+      //   'point',
+      //   new Vector(50.0, 45.0, -60.0),
+      //   new Color(0.69, 0.21, 0.73),
+      //   5
+      // ),
       // new Light(
       //   'point',
       //   new Vector(200.0, 30.0, 65.0),
@@ -42,7 +32,16 @@ export default class Scene {
     this.objects = [
       new Plane(
         new Vector(0.0, 1.0, 0.0),
-        new Material(Color.white(), 0.4, 0.2, 2, 0.25)
+        new Material(
+          (pos) =>
+            (Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0
+              ? Color.white()
+              : Color.black(),
+          0.4,
+          0.2,
+          2,
+          0.25
+        )
       ),
       new Sphere(
         new Vector(1.0, 3.0, -0.5),

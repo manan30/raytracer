@@ -157,9 +157,12 @@ export default class RayTracer {
   illuminate(intersectionPoint, normal, viewingDirection, material, depth) {
     let color = new Color(0, 0, 0);
 
-    const ambientColor = material.surfaceColor.scalarMultiply(material.ka);
-    let diffuseColor = Color.background();
-    const specularColor = Color.background();
+    const matColor =
+      typeof material.surfaceColor === 'function'
+        ? material.surfaceColor(intersectionPoint)
+        : material.surfaceColor;
+
+    const ambientColor = matColor.scalarMultiply(material.ka);
 
     color = color.add(ambientColor);
 
@@ -183,26 +186,24 @@ export default class RayTracer {
       ) {
         const reflectedVector = this.getReflectedRay(viewingDirection, normal);
 
-        diffuseColor = diffuseColor.add(
-          light.color
-            // .scalarMultiply(light.intensity)
-            .multiply(material.surfaceColor)
+        const lightIntensity = light.intensityAt(intersectionPoint);
+
+        color = color.add(
+          lightIntensity
+            .multiply(matColor)
             .scalarMultiply(incomingLightDirection.dotProduct(normal))
             .scalarMultiply(material.kd)
         );
 
-        // specularColor = specularColor.add(
-        //   light.color
-        //     // .scalarMultiply(light.intensity)
-        //     .multiply(Color.white())
-        //     .scalarMultiply(
-        //       reflectedVector.dotProduct(viewingDirection) ** material.ke
-        //     )
-        //     .scalarMultiply(material.ks)
-        // );
+        color = color.add(
+          lightIntensity
+            .multiply(Color.white())
+            .scalarMultiply(
+              reflectedVector.dotProduct(viewingDirection) ** material.ke
+            )
+            .scalarMultiply(material.ks)
+        );
       }
-
-      color = color.add(diffuseColor).add(specularColor);
     });
 
     return color;
