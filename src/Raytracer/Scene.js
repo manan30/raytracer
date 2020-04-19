@@ -17,7 +17,7 @@ export default class Scene {
         'point',
         new Vector(-50.0, 20.0, 5.0),
         new Color(0.4, 1.0, 0.8),
-        1
+        3
       ),
       new Light(
         'point',
@@ -25,18 +25,18 @@ export default class Scene {
         new Color(0.6, 0.2, 0.0),
         3
       ),
-      new Light(
-        'point',
-        new Vector(50.0, 45.0, -60.0),
-        new Color(0.69, 0.21, 0.73),
-        5
-      ),
-      new Light(
-        'point',
-        new Vector(200.0, 30.0, 65.0),
-        new Color(0.43, 0.86, 0.59),
-        7
-      ),
+      // new Light(
+      //   'point',
+      //   new Vector(50.0, 45.0, -60.0),
+      //   new Color(0.69, 0.21, 0.73),
+      //   5
+      // ),
+      // new Light(
+      //   'point',
+      //   new Vector(200.0, 30.0, 65.0),
+      //   new Color(0.43, 0.86, 0.59),
+      //   7
+      // ),
     ];
 
     this.objects = [

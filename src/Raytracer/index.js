@@ -88,39 +88,63 @@ export default class RayTracer {
    * @return {Color} {description}
    */
   illuminate(intersectionPoint, normal, ray, material, depth) {
-    let ambientColor = material.surfaceColor.scalarMultiply(material.ka);
+    const ambientColor = material.surfaceColor.scalarMultiply(material.ka);
 
     let diffuseColor = Color.background();
-    let specularColor = Color.background();
+    const specularColor = Color.background();
 
+    // const directionToLight = lights[i].position.subtract(position).normalize();
+
+    // const shadowRay = new Ray(
+    //   position.add(normal.scalarMultiply(0.0001)),
+    //   directionToLight
+    // );
+
+    // const shadowRayIntersection = this.spawnShadowRay(shadowRay);
+    // if (
+    //   shadowRayIntersection === null ||
+    //   (!shadowRayIntersection.isHit &&
+    //     shadowRayIntersection.distance > lights[i].distance(position) &&
+    //     directionToLight.dotProduct(normal) > 0)
+    // ) {
+    //   const intensity = lights[i].intensityAt(position);
+
+    //   const genColor = intensity.multiply(
+    //     material
+    //       .diffuse(position)
+    //       .scalarMultiply(normal.dotProduct(directionToLight))
+    //   );
+    //   color = color.add(genColor);
+    // }
     this.scene.lights.forEach((light) => {
       const incomingLightDirection = light.position
         .subtract(intersectionPoint)
         .normalize();
       const distanceToLight = intersectionPoint.dotProduct(light.position);
 
-      const shadowRay = new Ray(intersectionPoint, light.position);
+      const shadowRay = new Ray(
+        intersectionPoint.add(normal.scalarMultiply(0.0001)),
+        incomingLightDirection
+      );
 
       if (!this.isInShadow(shadowRay, distanceToLight)) {
         const reflectedRay = this.getReflectedRay(ray, normal);
 
         diffuseColor = diffuseColor.add(
           light.color
-            // .scalarMultiply(light.intensity)
+            .scalarMultiply(light.intensity)
             .add(material.surfaceColor)
             .scalarMultiply(incomingLightDirection.dotProduct(normal))
             .scalarMultiply(material.kd)
         );
 
-        specularColor = specularColor.add(
-          light.color
-            // .scalarMultiply(light.intensity)
-            .add(Color.white())
-            .scalarMultiply(reflectedRay.dotProduct(ray) ** material.ke)
-            .scalarMultiply(material.ks)
-        );
-      } else {
-        ambientColor = ambientColor.add(Color.background());
+        // specularColor = specularColor.add(
+        //   light.color
+        //     // .scalarMultiply(light.intensity)
+        //     .add(Color.white())
+        //     .scalarMultiply(reflectedRay.dotProduct(ray) ** material.ke)
+        //     .scalarMultiply(material.ks)
+        // );
       }
     });
 
