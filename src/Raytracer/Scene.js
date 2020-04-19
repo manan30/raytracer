@@ -25,12 +25,12 @@ export default class Scene {
         new Color(0.6, 0.2, 0.0),
         3
       ),
-      // new Light(
-      //   'point',
-      //   new Vector(50.0, 45.0, -60.0),
-      //   new Color(0.69, 0.21, 0.73),
-      //   5
-      // ),
+      new Light(
+        'point',
+        new Vector(50.0, 45.0, -60.0),
+        new Color(0.69, 0.21, 0.73),
+        5
+      ),
       // new Light(
       //   'point',
       //   new Vector(200.0, 30.0, 65.0),
@@ -47,12 +47,12 @@ export default class Scene {
       new Sphere(
         new Vector(1.0, 3.0, -0.5),
         2.0,
-        new Material(new Color(0.65, 0.77, 0.97), 0.4, 0.4, 20, 0.35)
+        new Material(new Color(0.65, 0.77, 0.97), 0.1, 0.9, 20, 0.35)
       ),
       new Sphere(
         new Vector(-4.0, 0.5, 1.5),
         2.0,
-        new Material(new Color(0.69, 0.28, 0.73), 0.4, 0.4, 100, 0.001)
+        new Material(new Color(0.69, 0.28, 0.73), 0.4, 0.6, 100, 0.001)
       ),
     ];
   }

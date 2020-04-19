@@ -68,14 +68,9 @@ export default class RayTracer {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  isInShadow(shadowRay, distanceToLight) {
+  isInShadow(shadowRay) {
     const shadowRayIntersection = this.intersectScene(shadowRay);
-
-    return (
-      shadowRayIntersection &&
-      shadowRayIntersection.isHit &&
-      shadowRayIntersection.distance < distanceToLight
-    );
+    return shadowRayIntersection;
   }
 
   /**
@@ -91,7 +86,7 @@ export default class RayTracer {
     const ambientColor = material.surfaceColor.scalarMultiply(material.ka);
 
     let diffuseColor = Color.background();
-    const specularColor = Color.background();
+    let specularColor = Color.background();
 
     // const directionToLight = lights[i].position.subtract(position).normalize();
 
@@ -126,25 +121,31 @@ export default class RayTracer {
         intersectionPoint.add(normal.scalarMultiply(0.0001)),
         incomingLightDirection
       );
+      const shadowRayIntersection = this.isInShadow(shadowRay);
 
-      if (!this.isInShadow(shadowRay, distanceToLight)) {
+      if (
+        shadowRayIntersection === null ||
+        (!shadowRayIntersection.isHit &&
+          shadowRayIntersection.distance > distanceToLight &&
+          incomingLightDirection.dotProduct(normal) > 0)
+      ) {
         const reflectedRay = this.getReflectedRay(ray, normal);
 
         diffuseColor = diffuseColor.add(
           light.color
             .scalarMultiply(light.intensity)
-            .add(material.surfaceColor)
+            .multiply(material.surfaceColor)
             .scalarMultiply(incomingLightDirection.dotProduct(normal))
             .scalarMultiply(material.kd)
         );
 
-        // specularColor = specularColor.add(
-        //   light.color
-        //     // .scalarMultiply(light.intensity)
-        //     .add(Color.white())
-        //     .scalarMultiply(reflectedRay.dotProduct(ray) ** material.ke)
-        //     .scalarMultiply(material.ks)
-        // );
+        specularColor = specularColor.add(
+          light.color
+            .scalarMultiply(light.intensity)
+            .multiply(Color.white())
+            .scalarMultiply(reflectedRay.dotProduct(ray) ** material.ke)
+            .scalarMultiply(material.ks)
+        );
       }
     });
 
