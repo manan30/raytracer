@@ -24,8 +24,10 @@ function MainScene({ canvasRef }) {
     const { current: ele } = canvasRef;
     const canvas = document.createElement('canvas');
     canvas.style.width = '100%';
-    canvas.width = 2056;
-    canvas.height = 2056;
+    // canvas.width = 256;
+    // canvas.height = 256;
+    canvas.width = 2048;
+    canvas.height = 2048;
     ele.appendChild(canvas);
     const context = canvas.getContext('2d');
     const rayTracer = new RayTracer(canvas.width, canvas.height, context);

@@ -3,6 +3,7 @@ import Material from './Material';
 import Ray from './Ray';
 import Scene from './Scene';
 import Vector from './Vector';
+import { getAmbientLight, getDiffuseLight, getSpecularLight } from './Light';
 
 /**
  * @class RayTracer
@@ -66,7 +67,6 @@ export default class RayTracer {
       .normalize();
   }
 
-  // eslint-disable-next-line class-methods-use-this
   isInShadow(shadowRay) {
     const shadowRayIntersection = this.intersectScene(shadowRay);
     return shadowRayIntersection;
@@ -92,59 +92,6 @@ export default class RayTracer {
   //     .multiply(specularHighlight);
   // }
 
-  // let color = new Color(0, 0, 0);
-
-  //   const { lights } = this.scene;
-
-  //   for (let i = 0; i < lights.length; i += 1) {
-  //     const directionToLight = lights[i].position
-  //       .subtract(position)
-  //       .normalize();
-
-  //     const shadowRay = new Ray(
-  //       position.add(normal.scalarMultiply(0.00001)),
-  //       directionToLight
-  //     );
-
-  //     const shadowRayIntersection = this.spawnShadowRay(shadowRay);
-  //     if (
-  //       shadowRayIntersection === null ||
-  //       (!shadowRayIntersection.isHit &&
-  //         shadowRayIntersection.distance > lights[i].distance(position) &&
-  //         directionToLight.dotProduct(normal) > 0)
-  //     ) {
-  //       const intensity = lights[i].intensityAt(position);
-
-  //       const genColor = intensity.multiply(
-  //         material
-  //           .diffuse(position)
-  //           .scalarMultiply(normal.dotProduct(directionToLight))
-  //       );
-  //       color = color.add(genColor);
-
-  //       if (depth > 1 && material.isSpecular) {
-  //         color = color.add(
-  //           this.calculateReflectedLight(
-  //             direction,
-  //             normal,
-  //             position,
-  //             depth,
-  //             material.reflection,
-  //             material.specular
-  //           )
-  //         );
-  //       }
-  //     }
-  //   }
-
-  //   if (depth > 1 && material.isTransparent) {
-  //     color = color.add(
-  //       this.calculateRefractedLight(direction, normal, position, depth)
-  //     );
-  //   }
-
-  //   return color;
-
   /**
    * @function {function illuminate}
    * @param  {Vector} intersectionPoint {description}
@@ -155,57 +102,90 @@ export default class RayTracer {
    * @return {Color} {description}
    */
   illuminate(intersectionPoint, normal, viewingDirection, material, depth) {
+    // const { lights } = this.scene;
+    // let color = Color.black();
+    // lights.forEach((light) => {
+    //   const incomingLightDirection = light.position
+    //     .subtract(intersectionPoint)
+    //     .normalize();
+    //   const ambientLight = getAmbientLight(material.surfaceColor, light);
+    //   color = color.add(ambientLight);
+    //   const shadowRay = new Ray(
+    //     intersectionPoint.add(normal.scalarMultiply(0.0000000000001)),
+    //     incomingLightDirection
+    //   );
+    //   const shadowRayIntersection = this.isInShadow(shadowRay);
+    //   if (shadowRayIntersection === null) {
+    //     const tempColor = Color.black();
+    //     const diffuseLight = getDiffuseLight(
+    //       incomingLightDirection,
+    //       light,
+    //       intersectionPoint,
+    //       normal,
+    //       material
+    //     );
+    //     const reflectedVector = normal
+    //       .scalarMultiply(incomingLightDirection.dotProduct(normal) * 2)
+    //       .subtract(incomingLightDirection)
+    //       .normalize();
+    //     const specularLight = getSpecularLight(
+    //       light,
+    //       viewingDirection,
+    //       reflectedVector,
+    //       material
+    //     );
+    //     color = color.add(
+    //       tempColor.add(ambientLight).add(diffuseLight).add(specularLight)
+    //     );
+    //   }
+    // });
+    // return color;
     let color = new Color(0, 0, 0);
-
-    const matColor =
-      typeof material.surfaceColor === 'function'
-        ? material.surfaceColor(intersectionPoint)
-        : material.surfaceColor;
-
-    const ambientColor = matColor.scalarMultiply(material.ka);
-
-    color = color.add(ambientColor);
-
-    this.scene.lights.forEach((light) => {
-      const incomingLightDirection = light.position
+    const { lights } = this.scene;
+    for (let i = 0; i < lights.length; i += 1) {
+      const directionToLight = lights[i].position
         .subtract(intersectionPoint)
         .normalize();
-      const distanceToLight = intersectionPoint.dotProduct(light.position);
-
       const shadowRay = new Ray(
-        intersectionPoint.add(normal.scalarMultiply(0.0001)),
-        incomingLightDirection
+        intersectionPoint.add(normal.scalarMultiply(0.00001)),
+        directionToLight
       );
       const shadowRayIntersection = this.isInShadow(shadowRay);
-
       if (
         shadowRayIntersection === null ||
         (!shadowRayIntersection.isHit &&
-          shadowRayIntersection.distance > distanceToLight &&
-          incomingLightDirection.dotProduct(normal) > 0)
+          shadowRayIntersection.distance >
+            lights[i].distance(intersectionPoint) &&
+          directionToLight.dotProduct(normal) > 0)
       ) {
-        const reflectedVector = this.getReflectedRay(viewingDirection, normal);
-
-        const lightIntensity = light.intensityAt(intersectionPoint);
-
-        color = color.add(
-          lightIntensity
-            .multiply(matColor)
-            .scalarMultiply(incomingLightDirection.dotProduct(normal))
-            .scalarMultiply(material.kd)
+        const { color: lColor } = lights[i];
+        const genColor = lColor.multiply(
+          material.surfaceColor.scalarMultiply(
+            normal.dotProduct(directionToLight)
+          )
         );
 
-        color = color.add(
-          lightIntensity
-            .multiply(Color.white())
-            .scalarMultiply(
-              reflectedVector.dotProduct(viewingDirection) ** material.ke
-            )
-            .scalarMultiply(material.ks)
-        );
+        color = color.add(genColor);
+
+        // if (depth > 1 && material.isSpecular) {
+        //   color = color.add(
+        //     this.calculateReflectedLight(
+        //       direction,
+        //       normal,
+        //       position,
+        //       depth,
+        //       material.reflection,
+        //       material.specular
+        //     )
+        //   );
+        // }
       }
-    });
-
+    }
+    // if (depth > 1 && material.isTransparent) {
+    //   color = color.add(
+    //     this.calculateRefractedLight(direction, normal, position, depth)
+    //   );
+    // }
     return color;
   }
 
@@ -228,7 +208,7 @@ export default class RayTracer {
   trace(ray, depth) {
     const intersection = this.intersectScene(ray);
 
-    if (!intersection || !intersection.isHit) {
+    if (intersection === null || !intersection.isHit) {
       return Color.black();
     }
 

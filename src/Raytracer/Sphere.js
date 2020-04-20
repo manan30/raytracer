@@ -1,24 +1,30 @@
 import Intersection from './Intersection';
+import Ray from './Ray';
+import Vector from './Vector';
+import Color from './Color';
 
 export default class Sphere {
-  constructor(name, position, size, color, material) {
-    this.name = name;
+  constructor(position: Vector, size: Number, material: Color) {
     this.position = position;
     this.size = size;
-    this.color = color;
     this.material = material;
   }
 
+  /**
+   * @function {function intersect}
+   * @param  {Ray} ray {description}
+   * @return {Intersection} {description}
+   */
   intersect(ray) {
-    const rayToCenter = ray.start.subtract(this.position);
-    const a = ray.dir.dotProduct(ray.dir);
-    const b = 2 * ray.dir.dotProduct(rayToCenter);
+    const rayToCenter = ray.origin.subtract(this.position);
+    const a = ray.direction.dotProduct(ray.direction);
+    const b = 2 * ray.direction.dotProduct(rayToCenter);
     const c = rayToCenter.dotProduct(rayToCenter) - this.size * this.size;
     const discriminant = b * b - 4 * a * c;
 
-    let closestDistance = 0;
-    let distance1;
-    let distance2;
+    let closestDistance = 0.0;
+    let distance1 = 0.0;
+    let distance2 = 0.0;
 
     if (discriminant < 0) return new Intersection(false);
 
@@ -44,6 +50,6 @@ export default class Sphere {
       );
     }
 
-    return new Intersection(null);
+    return new Intersection(false);
   }
 }
