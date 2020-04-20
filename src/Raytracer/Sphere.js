@@ -1,65 +1,49 @@
 import Intersection from './Intersection';
-import Vector from './Vector';
-import Material from './Material';
-import Ray from './Ray';
 
 export default class Sphere {
-  constructor(position: Vector, size: Number, material: Material) {
+  constructor(name, position, size, color, material) {
+    this.name = name;
     this.position = position;
     this.size = size;
+    this.color = color;
     this.material = material;
   }
 
-  /**
-   * @function {function intersect}
-   * @param  {Ray} ray {description}
-   * @return {Intersection} {description}
-   */
   intersect(ray) {
-    const rayToCenter = ray.origin.subtract(this.position);
-    const b = 2 * ray.direction.dotProduct(rayToCenter);
-    const a = ray.direction.dotProduct(ray.direction);
+    const rayToCenter = ray.start.subtract(this.position);
+    const a = ray.dir.dotProduct(ray.dir);
+    const b = 2 * ray.dir.dotProduct(rayToCenter);
     const c = rayToCenter.dotProduct(rayToCenter) - this.size * this.size;
-    let discriminant = b * b - 4 * a * c;
+    const discriminant = b * b - 4 * a * c;
+
+    let closestDistance = 0;
+    let distance1;
+    let distance2;
 
     if (discriminant < 0) return new Intersection(false);
 
-    discriminant = Math.sqrt(discriminant);
-
-    let closestDistance = 0;
-    let distance1 = 0.0;
-    let distance2 = 0.0;
-
     if (discriminant === 0) {
-      distance1 = (-0.5 * b) / a;
+      distance1 = -b / (2 * a);
     } else {
-      const q = b > 0 ? 0.5 * (-b + discriminant) : 0.5 * (-b - discriminant);
-      distance1 = q / a;
-      distance2 = c / q;
+      distance1 = (-b - discriminant) / (2 * a);
+      distance2 = (-b + discriminant) / (2 * a);
     }
 
-    if (distance1 > distance2) {
-      const temp = distance1;
-      distance1 = distance2;
-      distance2 = temp;
+    closestDistance = distance1 > 0 ? distance1 : distance2;
+
+    if (closestDistance > 0) {
+      const intersectionPoint = ray.at(closestDistance);
+      const normal = intersectionPoint.subtract(this.position).normalize();
+
+      return new Intersection(
+        true,
+        intersectionPoint,
+        normal,
+        ray,
+        this.material
+      );
     }
 
-    if (distance1 < 0) {
-      distance1 = distance2;
-      if (distance1 < 0) return new Intersection(false);
-    }
-
-    closestDistance = distance1;
-
-    const point = ray.at(closestDistance);
-
-    // Normal needs to be flipped if this is a refractive ray.
-    // if (ray.direction.dot(normal) > 0) {
-    //   normal *= -1;
-    // }
-
-    const normal = point.subtract(this.position).normalize();
-
-    return new Intersection(true, point, normal, ray, this.material);
+    return new Intersection(null);
   }
 }
