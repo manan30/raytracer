@@ -20,11 +20,13 @@ export default class Light {
   // }
 }
 
-export function getAmbientLight(surfaceColor: Color, light: Light) {
-  const comp = 0.5;
+export function getAmbientLight(surfaceColor: Color, lights: Array<Light>) {
+  const comp = 1 / lights.length;
   let ambientColor = Color.black();
 
-  ambientColor = ambientColor.add(light.color.scalarMultiply(comp));
+  for (let i = 0; i < lights.length; i += 1) {
+    ambientColor = ambientColor.add(lights[i].intensity.scalarMultiply(comp));
+  }
 
   return ambientColor.multiply(surfaceColor).scalarMultiply(0.33);
 }
@@ -40,14 +42,14 @@ export function getDiffuseLight(
 
   const scalarVals = incomingLightDirection.dotProduct(normal);
 
-  const tmpColor = light.intensity;
+  const tmpColor = light.color;
   const objectColor = material.surfaceColor;
 
   const finalColor = tmpColor.multiply(objectColor).scalarMultiply(scalarVals);
 
   diffuseLight = diffuseLight.add(finalColor);
 
-  return diffuseLight.scalarMultiply(0.333);
+  return diffuseLight.scalarMultiply(material.kd);
 }
 
 export function getSpecularLight(

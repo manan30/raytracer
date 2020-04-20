@@ -17,18 +17,17 @@ export default class Plane {
   intersect(ray) {
     const denom = this.normal.dotProduct(ray.direction);
 
-    if (denom >= 0) {
+    if (denom > 0) {
       return new Intersection(false);
     }
 
-    const dist = -(this.normal.dotProduct(ray.origin) / denom);
-
+    const dist = this.normal.dotProduct(ray.origin) / denom;
     const intersectionPoint = ray.at(dist);
 
     return new Intersection(
       true,
       intersectionPoint,
-      this.normal.normalize(),
+      this.normal,
       ray,
       this.material
     );

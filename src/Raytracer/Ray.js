@@ -12,6 +12,6 @@ export default class Ray {
    * @return {Vector} {description}
    */
   at(factor) {
-    return this.origin.add(this.direction.scalarMultiply(factor)).normalize();
+    return this.origin.add(this.direction.scalarMultiply(factor));
   }
 }

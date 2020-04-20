@@ -22,34 +22,47 @@ export default class Sphere {
     const c = rayToCenter.dotProduct(rayToCenter) - this.size * this.size;
     const discriminant = b * b - 4 * a * c;
 
-    let closestDistance = 0.0;
-    let distance1 = 0.0;
-    let distance2 = 0.0;
+    let closestDistance = 0;
+    let distance1;
+    let distance2;
 
     if (discriminant < 0) return new Intersection(false);
 
     if (discriminant === 0) {
-      distance1 = -b / (2 * a);
+      distance1 = (-0.5 * b) / a;
     } else {
-      distance1 = (-b - discriminant) / (2 * a);
-      distance2 = (-b + discriminant) / (2 * a);
+      const q =
+        b > 0
+          ? -0.5 * (b + Math.sqrt(discriminant))
+          : -0.5 * (b - Math.sqrt(discriminant));
+      distance1 = q / a;
+      distance2 = c / q;
     }
 
-    closestDistance = distance1 > 0 ? distance1 : distance2;
-
-    if (closestDistance > 0) {
-      const intersectionPoint = ray.at(closestDistance);
-      const normal = intersectionPoint.subtract(this.position).normalize();
-
-      return new Intersection(
-        true,
-        intersectionPoint,
-        normal,
-        ray,
-        this.material
-      );
+    if (distance1 > distance2) {
+      const temp = distance1;
+      distance1 = distance2;
+      distance2 = temp;
     }
 
-    return new Intersection(false);
+    if (distance1 < 0) {
+      distance1 = distance2;
+      if (distance1 < 0) return new Intersection(false);
+    }
+
+    closestDistance = distance1;
+
+    const intersectionPoint = ray.at(closestDistance);
+    const normal = intersectionPoint
+      .subtract(this.position)
+      .scalarDivide(this.size);
+
+    return new Intersection(
+      true,
+      intersectionPoint,
+      normal,
+      ray,
+      this.material
+    );
   }
 }

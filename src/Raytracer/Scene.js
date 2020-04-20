@@ -14,14 +14,16 @@ export default class Scene {
     );
     this.lights = [
       new Light(
-        new Vector(0.5, 4, 10),
-        Color.white(),
-        new Color(0.6, 0.44, 0.21)
+        new Vector(-5.0, 5.0, 5.0),
+        new Color(0.65, 0.77, 0.97),
+        // new Color(0.6, 0.44, 0.21)
+        Color.white()
       ),
       new Light(
-        new Vector(-3, 8, -10),
-        Color.white(),
-        new Color(0.74, 0.39, 0.56)
+        new Vector(10.0, 5.0, -5.0),
+        new Color(0.69, 0.28, 0.73),
+        // new Color(0.6, 0.44, 0.21)
+        Color.white()
       ),
       // new Light(
       //   new Vector(10.0, 5.0, -5.0),
@@ -45,7 +47,7 @@ export default class Scene {
         )
       ),
       new Sphere(
-        new Vector(1.0, 3.0, -0.5),
+        new Vector(0.0, 1.0, -0.25),
         2.0,
         new Material(new Color(0.65, 0.77, 0.97), 0.1, 0.9, 100, 0.35)
       ),
