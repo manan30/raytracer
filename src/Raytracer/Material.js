@@ -6,7 +6,8 @@ export default class Material {
     kd: Number,
     ks: Number,
     ke: Number,
-    kr: Number = 0.0
+    kr: Number = 0.0,
+    kt: Number = 0.0
   ) {
     this.surfaceColor = surfaceColor;
     this.ka = 0.2;
@@ -14,5 +15,6 @@ export default class Material {
     this.ks = ks;
     this.ke = ke;
     this.kr = kr;
+    this.kt = kt;
   }
 }

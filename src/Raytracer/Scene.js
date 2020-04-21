@@ -54,7 +54,7 @@ export default class Scene {
       new Sphere(
         new Vector(-4.0, 0.5, 1.5),
         2.0,
-        new Material(new Color(0.69, 0.28, 0.73), 0.4, 0.6, 100)
+        new Material(new Color(0.69, 0.28, 0.73), 0.4, 0.6, 100, 0.0, 0.8)
       ),
     ];
   }
