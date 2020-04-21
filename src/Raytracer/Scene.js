@@ -36,10 +36,10 @@ export default class Scene {
       new Plane(
         new Vector(0.0, 1.0, 0.0),
         new Material(
-          // (pos) =>
-          //   (Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0
-          Color.white(),
-          // : Color.black(),
+          (pos) =>
+            (Math.floor(pos.z) + Math.floor(pos.x)) % 2 !== 0
+              ? Color.white()
+              : Color.black(),
           0.4,
           0.2,
           2,

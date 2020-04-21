@@ -2,7 +2,7 @@ import Color from './Color';
 
 export default class Material {
   constructor(
-    surfaceColor: Color,
+    surfaceColor: Color | Function,
     kd: Number,
     ks: Number,
     ke: Number,

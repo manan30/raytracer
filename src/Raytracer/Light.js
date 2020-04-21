@@ -36,20 +36,22 @@ export function getDiffuseLight(
   light: Light,
   intersectionPoint: Vector,
   normal: Vector,
-  material: Material
+  materialColor: Color,
+  kd: Number
 ) {
   let diffuseLight = Color.black();
 
   const scalarVals = incomingLightDirection.dotProduct(normal);
 
   const tmpColor = light.color;
-  const objectColor = material.surfaceColor;
+
+  const objectColor = materialColor;
 
   const finalColor = tmpColor.multiply(objectColor).scalarMultiply(scalarVals);
 
   diffuseLight = diffuseLight.add(finalColor);
 
-  return diffuseLight.scalarMultiply(material.kd);
+  return diffuseLight.scalarMultiply(kd);
 }
 
 export function getSpecularLight(
@@ -63,7 +65,7 @@ export function getSpecularLight(
 
   const scalarVals = reflection.dotProduct(viewingDirection) ** material.ke;
 
-  const tmpColor = light.intensity;
+  const tmpColor = light.color;
 
   const finalColor = tmpColor.scalarMultiply(scalarVals);
 

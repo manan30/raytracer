@@ -85,7 +85,12 @@ export default class RayTracer {
     const { lights } = this.scene;
     let color = Color.black();
 
-    const ambientLight = getAmbientLight(material.surfaceColor, lights);
+    const materialColor =
+      typeof material.surfaceColor === 'function'
+        ? material.surfaceColor(intersectionPoint)
+        : material.surfaceColor;
+
+    const ambientLight = getAmbientLight(materialColor, lights);
     color = color.add(ambientLight);
 
     for (let i = 0; i < lights.length; i += 1) {
@@ -112,7 +117,8 @@ export default class RayTracer {
           lights[i],
           intersectionPoint,
           normal,
-          material
+          materialColor,
+          material.kd
         );
 
         color = color.add(diffuseLight);
