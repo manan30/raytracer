@@ -41,20 +41,19 @@ export default class Scene {
               ? Color.white()
               : Color.black(),
           0.4,
-          0.2,
-          2,
-          0.25
+          0.0,
+          1.0
         )
       ),
       new Sphere(
         new Vector(0.0, 1.0, -0.25),
         2.0,
-        new Material(new Color(0.65, 0.77, 0.97), 0.1, 0.9, 100, 0.35)
+        new Material(new Color(0.65, 0.77, 0.97), 0.1, 0.9, 20, 0.6)
       ),
       new Sphere(
         new Vector(-4.0, 0.5, 1.5),
         2.0,
-        new Material(new Color(0.69, 0.28, 0.73), 0.4, 0.6, 100, 0.001)
+        new Material(new Color(0.69, 0.28, 0.73), 0.4, 0.6, 100, 0.0, 0.8)
       ),
     ];
   }

@@ -72,6 +72,26 @@ export default class RayTracer {
     return shadowRayIntersection;
   }
 
+  calculateReflectedColor(
+    intersectionPoint,
+    normal,
+    viewingDirection,
+    kr,
+    depth
+  ) {
+    const reflectedRayOrigin = intersectionPoint.add(
+      normal.scalarMultiply(0.0000000000001)
+    );
+
+    const reflectedRayVector = viewingDirection
+      .subtract(normal.scalarMultiply(viewingDirection.dotProduct(normal) * 2))
+      .normalize();
+
+    const reflectedRay = new Ray(reflectedRayOrigin, reflectedRayVector);
+
+    return this.trace(reflectedRay, depth - 1).scalarMultiply(kr);
+  }
+
   /**
    * @function {function illuminate}
    * @param  {Vector} intersectionPoint {description}
@@ -139,6 +159,80 @@ export default class RayTracer {
         color = color.add(specularLight);
       }
     }
+
+    if (depth > 0) {
+      if (material.kr > 0.0) {
+        color = color.add(
+          this.calculateReflectedColor(
+            intersectionPoint,
+            normal,
+            viewingDirection,
+            material.kr,
+            depth
+          )
+        );
+      }
+    }
+
+    // if (material.kt > 0.0) {
+    //   const transmittedRayVector = viewingDirection
+    //     .clone()
+    //     .normalize()
+    //     .multiplyScalar(0.0000000000001);
+    //   intersection.point.add(distance);
+
+    //   let ni;
+    //   let nt;
+    //   let nit;
+    //   let D;
+    //   let N;
+
+    //   ni = 1.0;
+    //   nt = intersection.geometry.material.n;
+
+    //   D = ray.direction.clone();
+    //   N = intersection.normal.clone();
+    //   DvN = D.clone().negate().dot(N);
+
+    //   // inside-outside test
+    //   if (DvN < 0) {
+    //     ni = intersection.geometry.material.n; // inside
+    //     nt = 1.0; // outside
+    //     N = N.negate();
+    //     DvN = D.clone().negate().dot(N);
+    //   }
+
+    //   nit = ni / nt;
+    //   const discrim = Math.sqrt(
+    //     1 + Math.pow(nit, 2) * (Math.pow(DvN, 2) - 1)
+    //   );
+    //   let reflectRayDirection = D.clone()
+    //     .multiplyScalar(nit)
+    //     .add(N.clone().multiplyScalar(DvN * nit - discrim));
+
+    //   // Total internal reflection
+    //   if (discrim < 0) {
+    //     // create new ray
+    //     const tmp = intersection.normal
+    //       .clone()
+    //       .multiplyScalar(2 * ray.direction.clone().dot(intersection.normal));
+    //     reflectRayDirection = ray.direction.clone().sub(tmp);
+    //   }
+
+    //   // var distanceForward   = reflectRayDirection.clone().negate().normalize().multiplyScalar(0.0000000000001);
+    //   // intersection.point.add(distanceForward);
+
+    //   const reflectRay = new Ray(
+    //     intersection.point.clone(),
+    //     reflectRayDirection
+    //   );
+
+    //   transmitColor = self
+    //     .illuminate(reflectRay, depth - 1)
+    //     .multiplyScalar(intersection.geometry.material.kt);
+    //   color = color.add(transmitColor);
+    // }
+    // }
 
     return color;
   }
