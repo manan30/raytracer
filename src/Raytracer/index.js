@@ -79,10 +79,12 @@ export default class RayTracer {
     kr,
     depth
   ) {
-    const reflectedRayOrigin = intersectionPoint.add(normal);
+    const reflectedRayOrigin = intersectionPoint.add(
+      normal.scalarMultiply(0.0000000000001)
+    );
 
     const reflectedRayVector = viewingDirection
-      .subtract(normal.scalarMultiply(2 * viewingDirection.dotProduct(normal)))
+      .subtract(normal.scalarMultiply(viewingDirection.dotProduct(normal) * 2))
       .normalize();
 
     const reflectedRay = new Ray(reflectedRayOrigin, reflectedRayVector);
@@ -117,7 +119,7 @@ export default class RayTracer {
         .normalize();
 
       const shadowRay = new Ray(
-        intersectionPoint.add(normal),
+        intersectionPoint.add(normal.scalarMultiply(0.0000000000001)),
         incomingLightDirection
       );
 
@@ -141,16 +143,16 @@ export default class RayTracer {
 
         color = color.add(diffuseLight);
 
-        const reflectedRayVector = incomingLightDirection
+        const reflectedVector = incomingLightDirection
           .subtract(
-            normal.scalarMultiply(2 * incomingLightDirection.dotProduct(normal))
+            normal.scalarMultiply(incomingLightDirection.dotProduct(normal) * 2)
           )
           .normalize();
 
         const specularLight = getSpecularLight(
           lights[i],
           viewingDirection,
-          reflectedRayVector,
+          reflectedVector,
           material
         );
 
@@ -158,18 +160,19 @@ export default class RayTracer {
       }
     }
 
-    // if (depth > 0) {
-    //   if (material.kr > 0.0) {
-    //     color = color.add(
-    //       this.calculateReflectedColor(
-    //         intersectionPoint,
-    //         normal,
-    //         viewingDirection,
-    //         material.kr,
-    //         depth
-    //       )
-    //     );
-    //   }
+    if (depth > 0) {
+      if (material.kr > 0.0) {
+        color = color.add(
+          this.calculateReflectedColor(
+            intersectionPoint,
+            normal,
+            viewingDirection,
+            material.kr,
+            depth
+          )
+        );
+      }
+    }
 
     // if (material.kt > 0.0) {
     //   const transmittedRayVector = viewingDirection
@@ -260,7 +263,7 @@ export default class RayTracer {
     return this.illuminate(
       intersection.point,
       intersection.normal,
-      intersection.ray.direction.scalarMultiply(-1.0),
+      intersection.ray.direction,
       intersection.material,
       depth
     );

@@ -41,9 +41,8 @@ export default class Scene {
               ? Color.white()
               : Color.black(),
           0.4,
-          0.2,
-          2,
-          0.25
+          0.0,
+          1.0
         )
       ),
       new Sphere(
