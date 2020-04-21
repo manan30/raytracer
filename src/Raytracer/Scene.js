@@ -15,19 +15,17 @@ export default class Scene {
     this.lights = [
       new Light(
         new Vector(-5.0, 5.0, 5.0),
-        new Color(0.65, 0.77, 0.97),
-        // new Color(0.6, 0.44, 0.21)
-        Color.white()
-      ),
-      new Light(
-        new Vector(10.0, 5.0, -5.0),
-        new Color(0.69, 0.28, 0.73),
-        // new Color(0.6, 0.44, 0.21)
+        new Color(0.62, 0.44, 0.21),
         Color.white()
       ),
       // new Light(
       //   new Vector(10.0, 5.0, -5.0),
-      //   new Color(25, 25, 25),
+      //   new Color(0.39, 0.64, 0.34),
+      //   Color.white()
+      // ),
+      // new Light(
+      //   new Vector(7.5, 10.0, -7.5),
+      //   new Color(0.55, 0.72, 0.43),
       //   Color.white()
       // ),
     ];
@@ -53,7 +51,7 @@ export default class Scene {
       new Sphere(
         new Vector(-4.0, 0.5, 1.5),
         2.0,
-        new Material(new Color(0.69, 0.28, 0.73), 0.4, 0.6, 100, 0.0, 0.8)
+        new Material(Color.white(), 0.4, 0.6, 100, 0.0, 0.8, 0.95)
       ),
     ];
   }

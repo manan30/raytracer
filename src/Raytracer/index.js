@@ -1,16 +1,21 @@
 import Color from './Color';
+import Intersection from './Intersection';
+import { getAmbientLight, getDiffuseLight, getSpecularLight } from './Light';
 import Material from './Material';
 import Ray from './Ray';
 import Scene from './Scene';
 import Vector from './Vector';
-import { getAmbientLight, getDiffuseLight, getSpecularLight } from './Light';
 
 /**
  * @class RayTracer
  */
 
 export default class RayTracer {
-  constructor(height, width, context) {
+  constructor(
+    height: Number,
+    width: Number,
+    context: CanvasRenderingContext2D
+  ) {
     this.scene = new Scene();
     this.height = height;
     this.width = width;
@@ -18,60 +23,20 @@ export default class RayTracer {
     this.inside = true;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  calculateLocalIllumination(position, normal, material, direction) {
-    let i = 0.0;
-
-    this.scene.lights.forEach((light) => {
-      if (light.type === 'ambient') i += light.intensity;
-      else {
-        let x;
-        if (light.type === 'point') {
-          x = light.position.subtract(position);
-        } else {
-          x = light.position;
-        }
-
-        const diffuse = normal.dotProduct(x);
-        if (diffuse > 0)
-          i += ((diffuse * light.intensity) / normal.length()) * x.length();
-
-        if (material.isSpecular) {
-          const r = normal
-            .scalarMultiply(2)
-            .scalarMultiply(normal.dotProduct(x))
-            .subtract(x);
-          const specular = r.dotProduct(x, direction);
-          if (specular > 0)
-            i +=
-              light.intensity *
-              (specular / r.length()) *
-              direction.length() ** material.specularConstant;
-        }
-      }
-    });
-
-    return material.surfaceColor.scalarMultiply(i);
-  }
-
   /**
-   * @function {function getReflectedRay}
-   * @param  {Vector} direction {description}
-   * @param  {Vector} normal    {description}
-   * @return {Vector} {description}
+   * @function {function isInShadow}
+   * @param  {Ray} shadowRay {description}
+   * @return {Intersection} {description}
    */
-  // eslint-disable-next-line class-methods-use-this
-  getReflectedRay(direction, normal) {
-    return direction
-      .subtract(normal.scalarMultiply(2 * direction.dotProduct(normal)))
-      .normalize();
-  }
-
   isInShadow(shadowRay) {
     const shadowRayIntersection = this.intersectScene(shadowRay);
     return shadowRayIntersection;
   }
 
+  /**
+   * @function {function calculateReflectedColor}
+   * @return {Color} {description}
+   */
   calculateReflectedColor(
     intersectionPoint,
     normal,
@@ -90,6 +55,59 @@ export default class RayTracer {
     const reflectedRay = new Ray(reflectedRayOrigin, reflectedRayVector);
 
     return this.trace(reflectedRay, depth - 1).scalarMultiply(kr);
+  }
+
+  /**
+   * @function {function name}
+   * @param  {Vector} intersectionPoint {description}
+   * @param  {Vector} viewingDirection  {description}
+   * @param  {Vector} normal            {description}
+   * @param  {Number} depth             {description}
+   * @return {Color} {description}
+   */
+  calculateRefractedColor(
+    intersectionPoint,
+    viewingDirection,
+    normal,
+    depth,
+    ior
+  ) {
+    const x = intersectionPoint.add(
+      viewingDirection.scalarMultiply(0.0000000000001)
+    );
+
+    let eta1 = 1.0;
+    let eta2 = ior;
+    let refractedNormal = normal;
+
+    let product = viewingDirection.dotProduct(normal);
+
+    if (product < 0) {
+      const temp = eta1;
+      eta1 = eta2;
+      eta2 = temp;
+      refractedNormal = normal.scalarMultiply(-1.0);
+      product = viewingDirection.dotProduct(normal.scalarMultiply(-1.0));
+    }
+
+    const eta = eta1 / eta2;
+    const discriminant = Math.sqrt(1 + eta ** 2 * (product ** 2 - 1));
+
+    let reflectRayDirection = viewingDirection
+      .scalarMultiply(eta)
+      .add(refractedNormal.scalarMultiply(product * eta - discriminant));
+
+    if (discriminant < 0) {
+      reflectRayDirection = viewingDirection
+        .subtract(
+          normal.scalarMultiply(viewingDirection.dotProduct(normal) * 2)
+        )
+        .normalize();
+    }
+
+    const reflectedRay = new Ray(x, reflectRayDirection);
+
+    return this.trace(reflectedRay, depth - 1);
   }
 
   /**
@@ -172,71 +190,27 @@ export default class RayTracer {
           )
         );
       }
+      if (material.kt > 0.0) {
+        color = color.add(
+          this.calculateRefractedColor(
+            intersectionPoint,
+            viewingDirection.scalarMultiply(-1.0),
+            normal,
+            depth,
+            material.ior
+          )
+        );
+      }
     }
-
-    // if (material.kt > 0.0) {
-    //   const transmittedRayVector = viewingDirection
-    //     .clone()
-    //     .normalize()
-    //     .multiplyScalar(0.0000000000001);
-    //   intersection.point.add(distance);
-
-    //   let ni;
-    //   let nt;
-    //   let nit;
-    //   let D;
-    //   let N;
-
-    //   ni = 1.0;
-    //   nt = intersection.geometry.material.n;
-
-    //   D = ray.direction.clone();
-    //   N = intersection.normal.clone();
-    //   DvN = D.clone().negate().dot(N);
-
-    //   // inside-outside test
-    //   if (DvN < 0) {
-    //     ni = intersection.geometry.material.n; // inside
-    //     nt = 1.0; // outside
-    //     N = N.negate();
-    //     DvN = D.clone().negate().dot(N);
-    //   }
-
-    //   nit = ni / nt;
-    //   const discrim = Math.sqrt(
-    //     1 + Math.pow(nit, 2) * (Math.pow(DvN, 2) - 1)
-    //   );
-    //   let reflectRayDirection = D.clone()
-    //     .multiplyScalar(nit)
-    //     .add(N.clone().multiplyScalar(DvN * nit - discrim));
-
-    //   // Total internal reflection
-    //   if (discrim < 0) {
-    //     // create new ray
-    //     const tmp = intersection.normal
-    //       .clone()
-    //       .multiplyScalar(2 * ray.direction.clone().dot(intersection.normal));
-    //     reflectRayDirection = ray.direction.clone().sub(tmp);
-    //   }
-
-    //   // var distanceForward   = reflectRayDirection.clone().negate().normalize().multiplyScalar(0.0000000000001);
-    //   // intersection.point.add(distanceForward);
-
-    //   const reflectRay = new Ray(
-    //     intersection.point.clone(),
-    //     reflectRayDirection
-    //   );
-
-    //   transmitColor = self
-    //     .illuminate(reflectRay, depth - 1)
-    //     .multiplyScalar(intersection.geometry.material.kt);
-    //   color = color.add(transmitColor);
-    // }
-    // }
 
     return color;
   }
 
+  /**
+   * @function {function intersectScene}
+   * @param  {Ray} ray {description}
+   * @return {Intersection | null} {description}
+   */
   intersectScene(ray) {
     let closest = +Infinity;
     let closestIntersection = null;
@@ -253,6 +227,12 @@ export default class RayTracer {
     return closestIntersection;
   }
 
+  /**
+   * @function {function trace}
+   * @param  {Ray} ray   {description}
+   * @param  {depth} depth {description}
+   * @return {Color} {description}
+   */
   trace(ray, depth) {
     const intersection = this.intersectScene(ray);
 
@@ -267,9 +247,12 @@ export default class RayTracer {
       intersection.material,
       depth
     );
-    // return intersection.material.surfaceColor;
   }
 
+  /**
+   * @function {function render}
+   * @return {void} {description}
+   */
   render() {
     const { camera } = this.scene;
 
