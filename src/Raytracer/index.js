@@ -72,6 +72,26 @@ export default class RayTracer {
     return shadowRayIntersection;
   }
 
+  calculateReflectedColor(
+    intersectionPoint,
+    normal,
+    viewingDirection,
+    kr,
+    depth
+  ) {
+    const reflectedRayOrigin = intersectionPoint.add(
+      normal.scalarMultiply(0.0000000000001)
+    );
+
+    const reflectedRayVector = normal.scalarMultiply(
+      2 * viewingDirection.dotProduct(normal)
+    );
+
+    const reflectedRay = new Ray(reflectedRayOrigin, reflectedRayVector);
+
+    return this.trace(reflectedRay, depth - 1).scalarMultiply(kr);
+  }
+
   /**
    * @function {function illuminate}
    * @param  {Vector} intersectionPoint {description}
@@ -123,7 +143,7 @@ export default class RayTracer {
 
         color = color.add(diffuseLight);
 
-        const reflectedVector = incomingLightDirection
+        const reflectedRayVector = incomingLightDirection
           .subtract(
             normal.scalarMultiply(incomingLightDirection.dotProduct(normal) * 2)
           )
@@ -132,12 +152,24 @@ export default class RayTracer {
         const specularLight = getSpecularLight(
           lights[i],
           viewingDirection,
-          reflectedVector,
+          reflectedRayVector,
           material
         );
 
         color = color.add(specularLight);
       }
+    }
+
+    if (depth > 0 && material.kr > 0.0) {
+      color = color.add(
+        this.calculateReflectedColor(
+          intersectionPoint,
+          normal,
+          viewingDirection,
+          material.kr,
+          depth
+        )
+      );
     }
 
     return color;
@@ -169,7 +201,7 @@ export default class RayTracer {
     return this.illuminate(
       intersection.point,
       intersection.normal,
-      intersection.ray.direction,
+      intersection.ray.direction.scalarMultiply(-1.0),
       intersection.material,
       depth
     );
