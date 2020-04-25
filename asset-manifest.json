@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.js": "/projects/raytracer/static/js/main.229a8c90.chunk.js",
+    "main.js.map": "/projects/raytracer/static/js/main.229a8c90.chunk.js.map",
+    "runtime-main.js": "/projects/raytracer/static/js/runtime-main.f60dca09.js",
+    "runtime-main.js.map": "/projects/raytracer/static/js/runtime-main.f60dca09.js.map",
+    "static/js/2.66302be5.chunk.js": "/projects/raytracer/static/js/2.66302be5.chunk.js",
+    "static/js/2.66302be5.chunk.js.map": "/projects/raytracer/static/js/2.66302be5.chunk.js.map",
+    "index.html": "/projects/raytracer/index.html",
+    "precache-manifest.5636f324cc4c609ecc1910fabc8589a6.js": "/projects/raytracer/precache-manifest.5636f324cc4c609ecc1910fabc8589a6.js",
+    "service-worker.js": "/projects/raytracer/service-worker.js",
+    "static/js/2.66302be5.chunk.js.LICENSE": "/projects/raytracer/static/js/2.66302be5.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f60dca09.js",
+    "static/js/2.66302be5.chunk.js",
+    "static/js/main.229a8c90.chunk.js"
+  ]
+}
