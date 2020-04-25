@@ -20,7 +20,10 @@ export default class RayTracer {
     this.height = height;
     this.width = width;
     this.context = context;
-    this.inside = true;
+    this.rayTracedPixels = [];
+    this.LD_MAX = 500;
+
+    // console.log(this.context);
   }
 
   /**
@@ -249,6 +252,79 @@ export default class RayTracer {
     );
   }
 
+  toneReproduce() {
+    // let luminanceSum = 0;
+
+    // for (let i = 0; i < this.rayTracedPixels.length; i += 1) {
+    //   const color = this.rayTracedPixels[i];
+    //   luminanceSum += Math.log(
+    //     0.000000001 +
+    //       (100 * color.r * 0.27 + 100 * color.g * 0.67 + 100 * color.b * 0.06)
+    //   );
+    // }
+
+    // const lBar = Math.exp(luminanceSum / this.rayTracedPixels.length);
+
+    // const compressionNumerator = 1.219 + (this.LD_MAX / 2) ** 0.4;
+    // const compressionDenominator = 1.219 + lBar ** 0.4;
+
+    // const compression = (pixel) => {
+    //   return (compressionNumerator / compressionDenominator) ** 2.5 * pixel;
+    // };
+
+    // const colors = [];
+
+    // for (let i = 0; i < this.rayTracedPixels.length; i += 1) {
+    //   const r = compression(this.rayTracedPixels[i].r) / this.LD_MAX;
+    //   const g = compression(this.rayTracedPixels[i].g) / this.LD_MAX;
+    //   const b = compression(this.rayTracedPixels[i].b) / this.LD_MAX;
+
+    //   const color = new Color(r, g, b);
+    //   colors.push(color.r);
+    //   colors.push(color.g);
+    //   colors.push(color.b);
+    //   colors.push(255);
+    // }
+
+    // return colors;
+    let luminanceSum = 0;
+
+    console.log(this.rayTracedPixels);
+
+    for (let i = 0; i < this.rayTracedPixels.length; i += 1) {
+      const color = this.rayTracedPixels[i];
+      luminanceSum += Math.log(
+        0.000000001 +
+          (100 * (color.r / 255) * 0.27 +
+            100 * (color.g / 255) * 0.67 +
+            100 * (color.b / 255) * 0.06)
+      );
+    }
+
+    const lBar = 45.08127396621869;
+
+    const compression = (pixel) => {
+      const scaled = (100 * (pixel / 255) * 0.18) / lBar;
+      return (scaled / (1 + scaled)) * this.LD_MAX;
+    };
+
+    const colors = [];
+
+    for (let i = 0; i < this.rayTracedPixels.length; i += 1) {
+      const r = compression((this.rayTracedPixels[i].r / this.LD_MAX) * 255);
+      const g = compression((this.rayTracedPixels[i].g / this.LD_MAX) * 255);
+      const b = compression((this.rayTracedPixels[i].b / this.LD_MAX) * 255);
+
+      const color = new Color(r, g, b);
+      colors.push(color.r);
+      colors.push(color.g);
+      colors.push(color.b);
+      colors.push(255);
+    }
+
+    return colors;
+  }
+
   /**
    * @function {function render}
    * @return {void} {description}
@@ -273,9 +349,20 @@ export default class RayTracer {
 
         const color = this.trace(ray, 5).toDrawingColor();
 
-        this.context.fillStyle = `rgb(${color.r},${color.g}, ${color.b})`;
-        this.context.fillRect(x, y, 1, 1);
+        this.rayTracedPixels.push(color);
+        // this.rayTracedPixels.push(color.r);
+        // this.rayTracedPixels.push(color.g);
+        // this.rayTracedPixels.push(color.b);
+        // this.rayTracedPixels.push(255);
       }
     }
+
+    const toneReproducedImg = this.toneReproduce();
+
+    const imageData = this.context.createImageData(this.height, this.width);
+    imageData.data.set(toneReproducedImg);
+    this.context.putImageData(imageData, 0, 0);
+    this.context.rotate(Math.PI / 2);
+    this.context.canvas.style.transform = 'rotate(90deg)';
   }
 }

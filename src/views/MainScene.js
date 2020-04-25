@@ -24,8 +24,8 @@ function MainScene({ canvasRef }) {
     const { current: ele } = canvasRef;
     const canvas = document.createElement('canvas');
     canvas.style.width = '100%';
-    // canvas.width = 256;
-    // canvas.height = 256;
+    // canvas.width = 400;
+    // canvas.height = 400;
     canvas.width = 2048;
     canvas.height = 2048;
     ele.appendChild(canvas);

@@ -1,24 +1,33 @@
+// @ts-check
+
 import Vector from './Vector';
 import Color from './Color';
 import Material from './Material';
 
 export default class Light {
-  constructor(position: Vector, color: Color, intensity: Color) {
+  constructor(position: Vector, color: Color, intensity: Number) {
     this.position = position;
     this.color = color;
     this.intensity = intensity;
   }
 }
 
+/**
+ * @function getAmbientLight
+ * @param  {Color} surfaceColor: Color  {description}
+ * @param  {Light []} lights: Array<Light> {description}
+ * @return {Color} {description}
+ */
 export function getAmbientLight(surfaceColor: Color, lights: Array<Light>) {
-  const comp = 1 / lights.length;
+  const scaleFactor = 1 / lights.length;
   let ambientColor = Color.black();
+  const whiteColor = Color.white();
 
   for (let i = 0; i < lights.length; i += 1) {
-    ambientColor = ambientColor.add(lights[i].intensity.scalarMultiply(comp));
+    ambientColor = ambientColor.add(whiteColor.scalarMultiply(scaleFactor));
   }
 
-  return ambientColor.multiply(surfaceColor).scalarMultiply(0.33);
+  return ambientColor.multiply(surfaceColor).scalarMultiply(0.2);
 }
 
 export function getDiffuseLight(
@@ -41,7 +50,7 @@ export function getDiffuseLight(
 
   diffuseLight = diffuseLight.add(finalColor);
 
-  return diffuseLight.scalarMultiply(kd);
+  return diffuseLight.scalarMultiply(kd).scalarMultiply(light.intensity);
 }
 
 export function getSpecularLight(
@@ -60,5 +69,7 @@ export function getSpecularLight(
   const finalColor = tmpColor.scalarMultiply(scalarVals);
 
   specularLight = specularLight.add(finalColor);
-  return specularLight.scalarMultiply(material.ks);
+  return specularLight
+    .scalarMultiply(material.ks)
+    .scalarMultiply(light.intensity);
 }

@@ -13,11 +13,7 @@ export default class Scene {
       new Vector(0.0, 0.0, 0.0)
     );
     this.lights = [
-      new Light(
-        new Vector(-5.0, 5.0, 5.0),
-        new Color(0.62, 0.44, 0.21),
-        Color.white()
-      ),
+      new Light(new Vector(-5.0, 5.0, 5.0), new Color(0.62, 0.44, 0.21), 10),
       // new Light(
       //   new Vector(10.0, 5.0, -5.0),
       //   new Color(0.39, 0.64, 0.34),
