@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { checkpoints } from './Constants';
 
@@ -34,9 +35,22 @@ const MainSection = styled.section`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 
   height: 100vh;
   width: 80%;
+
+  img {
+    height: 512px;
+    width: 512px;
+    margin-bottom: 16px;
+
+    border: 1px solid whitesmoke;
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+  }
 `;
 
 const RightArrow = () => {
@@ -48,15 +62,28 @@ const RightArrow = () => {
 };
 
 const Image = ({ src, altText }) => {
-  return <img src={src} alt={altText} color='#ffffff' />;
+  const [image, setImage] = useState();
+
+  import(`./Checkpoints/${src}.png`)
+    .then((res) => setImage(() => res.default))
+    .catch((err) => console.log(err));
+
+  return image ? (
+    <>
+      <img src={image} alt={altText} color='#ffffff' />
+      <div>{altText}</div>
+    </>
+  ) : (
+    <>Loading...</>
+  );
 };
 
 function Main() {
-  const [currentImage, setCurrentImage] = useState('checkpoint1');
+  const [currentImage, setCurrentImage] = useState('Checkpoint 1');
   function loadImage(e) {
     e.persist();
-    const curr = e.target.innerText.split(' ').join('').toLowerCase();
-    setCurrentImage(() => curr);
+    const curr = e.target.innerText;
+    if (e.type === 'click' || e.keyCode === 13) setCurrentImage(() => curr);
   }
 
   return (
@@ -83,5 +110,10 @@ function Main() {
     </div>
   );
 }
+
+Image.propTypes = {
+  src: PropTypes.string.isRequired,
+  altText: PropTypes.string.isRequired,
+};
 
 export default Main;

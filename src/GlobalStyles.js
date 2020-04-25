@@ -3,7 +3,8 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
   html, body {
-    font-family: "Work Sans", "sans-serif"
+    font-family: "Work Sans", "sans-serif";
+    color: #ffffff;
   }
 
   body {
