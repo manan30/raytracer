@@ -2,6 +2,10 @@ import { Canvas as C } from 'react-three-fiber';
 import styled, { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
+  html, body {
+    font-family: "Work Sans", "sans-serif"
+  }
+
   body {
     height: 100vh;
     width: 100vw;
