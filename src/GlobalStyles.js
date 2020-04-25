@@ -1,4 +1,3 @@
-import { Canvas as C } from 'react-three-fiber';
 import styled, { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
@@ -26,11 +25,11 @@ export default createGlobalStyle`
   }
 `;
 
-export const Canvas = styled(C)`
-  display: inline-block;
-  height: 100vh !important;
-  width: 50% !important;
-`;
+// export const Canvas = styled(C)`
+//   display: inline-block;
+//   height: 100vh !important;
+//   width: 50% !important;
+// `;
 
 export const RayTracedCanvas = styled.div`
   position: relative;
