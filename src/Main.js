@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { checkpoints } from './Constants';
+import { checkpoints, ToneReproductionResults as fetches } from './Constants';
 
 const SideSection = styled.section`
   height: calc(100vh - 50px);
@@ -38,7 +38,7 @@ const MainSection = styled.section`
   flex-direction: column;
 
   height: 100vh;
-  width: 80%;
+  width: 100%;
 
   img {
     height: 512px;
@@ -53,6 +53,20 @@ const MainSection = styled.section`
   }
 `;
 
+const Grid = styled.div`
+  display: grid;
+  grid-row-gap: 16px;
+  grid-column-gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+
+  margin: 8px 0 4px 0;
+
+  text-align: center;
+  color: #ffffff;
+
+  overflow: auto;
+`;
+
 const RightArrow = () => {
   return (
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#ffffff'>
@@ -62,24 +76,54 @@ const RightArrow = () => {
 };
 
 const Image = ({ src, altText }) => {
-  const [image, setImage] = useState();
+  const [image, setImage] = useState([]);
 
-  import(`./Checkpoints/${src}.png`)
-    .then((res) => setImage(() => res.default))
-    .catch((err) => console.log(err));
+  useEffect(() => {
+    if (src === 'Checkpoint 7') {
+      (async function getImage() {
+        const images = await Promise.all(
+          new Array(fetches.length)
+            .fill(0)
+            .map((_, i) => fetches[i])
+            .map((v) => import(`./Checkpoints/${v}.png`))
+        );
+        setImage(() => images.map(({ default: content }) => content));
+      })();
+    } else {
+      (async function getImage() {
+        const { default: content } = await import(`./Checkpoints/${src}.png`);
+        setImage(() => [content]);
+      })();
+    }
+  }, [src]);
 
-  return image ? (
-    <>
-      <img src={image} alt={altText} color='#ffffff' />
-      <div>{altText}</div>
-    </>
-  ) : (
-    <>Loading...</>
-  );
+  if (image.length > 0) {
+    return image.length > 1 ? (
+      <Grid>
+        {image.map((im, i) => {
+          const key = i;
+          return (
+            <div>
+              <img key={key} src={im} alt={fetches[i]} color='#ffffff' />
+              <div>{fetches[i]}</div>
+            </div>
+          );
+        })}
+      </Grid>
+    ) : (
+      <>
+        <img src={image[0]} alt={altText} color='#ffffff' />
+        <div>{altText}</div>
+      </>
+    );
+  }
+
+  return <>Loading...</>;
 };
 
 function Main() {
   const [currentImage, setCurrentImage] = useState('Checkpoint 1');
+
   function loadImage(e) {
     e.persist();
     const curr = e.target.innerText;
