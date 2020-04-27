@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { checkpoints, ToneReproductionResults as fetches } from './Constants';
+import {
+  checkpoints,
+  ToneReproductionResults as fetches,
+  AdvancedCheckpointResults as advanced,
+  AdvancedCheckpointCaptions as captions,
+} from './Constants';
 
 const SideSection = styled.section`
   height: calc(100vh - 50px);
@@ -89,6 +94,13 @@ const Image = ({ src, altText }) => {
         );
         setImage(() => images.map(({ default: content }) => content));
       })();
+    } else if (src[0] !== 'C') {
+      (async function getImage() {
+        const images = await Promise.all(
+          advanced.map((v) => import(`./Checkpoints/${v}`))
+        );
+        setImage(() => images.map(({ default: content }) => content));
+      })();
     } else {
       (async function getImage() {
         const { default: content } = await import(`./Checkpoints/${src}.png`);
@@ -98,22 +110,38 @@ const Image = ({ src, altText }) => {
   }, [src]);
 
   if (image.length > 0) {
-    return image.length > 1 ? (
-      <Grid>
-        {image.map((im, i) => {
-          const key = i;
-          return (
-            <div>
-              <img key={key} src={im} alt={fetches[i]} color='#ffffff' />
-              <div>{fetches[i]}</div>
-            </div>
-          );
-        })}
-      </Grid>
-    ) : (
+    if (image.length > 1) {
+      return image.length > 2 ? (
+        <Grid>
+          {image.map((im, i) => {
+            const key = i;
+            return (
+              <div>
+                <img key={key} src={im} alt={fetches[i]} color='#ffffff' />
+                <div style={{ fontSize: '12px' }}>{fetches[i]}</div>
+              </div>
+            );
+          })}
+        </Grid>
+      ) : (
+        <Grid>
+          {image.map((im, i) => {
+            const key = i;
+            return (
+              <div>
+                <img key={key} src={im} alt={captions[i]} color='#ffffff' />
+                <div style={{ fontSize: '12px' }}>{captions[i]}</div>
+              </div>
+            );
+          })}
+        </Grid>
+      );
+    }
+
+    return (
       <>
         <img src={image[0]} alt={altText} color='#ffffff' />
-        <div>{altText}</div>
+        <div style={{ fontSize: '12px' }}>{altText}</div>
       </>
     );
   }
@@ -141,7 +169,8 @@ function Main() {
               role='button'
               onClick={loadImage}
               onKeyUp={loadImage}
-              tabIndex={0}>
+              tabIndex={0}
+              style={{ fontSize: '14px' }}>
               {c}
               <RightArrow />
             </div>
