@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/raytracer/precache-manifest.a598298140441dcc4ea6dc935d9db500.js"
+  "/raytracer/precache-manifest.244f591b8b7c741388ef828c855b942b.js"
 );
 
 self.addEventListener('message', (event) => {
