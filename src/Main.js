@@ -191,6 +191,12 @@ function Main() {
               : 'KD-Tree implementation'
           }
         />
+        {currentImage === 'Advanced Checkpoint - KD-Tree' && (
+          <div style={{ marginTop: '16px', fontSize: '12px' }}>
+            <div> Tree Building Time: 3 seconds</div>
+            <div> Tree Rendering Time: 7 seconds</div>
+          </div>
+        )}
       </MainSection>
     </div>
   );
