@@ -4,13 +4,13 @@ import styled from 'styled-components';
 import {
   checkpoints,
   ToneReproductionResults as fetches,
-  AdvancedCheckpointResults as advanced,
-  AdvancedCheckpointCaptions as captions,
+  AdvancedCheckpointOSLResults as advanced,
+  AdvancedCheckpointOSLCaptions as captions,
 } from './Constants';
 
 const SideSection = styled.section`
   height: calc(100vh - 50px);
-  width: calc(20% - 50px);
+  width: calc(30% - 50px);
   padding: 25px;
 
   background: #263238;
@@ -94,12 +94,17 @@ const Image = ({ src, altText }) => {
         );
         setImage(() => images.map(({ default: content }) => content));
       })();
-    } else if (src[0] !== 'C') {
+    } else if (src === 'Advanced Checkpoint - OSL') {
       (async function getImage() {
         const images = await Promise.all(
           advanced.map((v) => import(`./Checkpoints/${v}`))
         );
         setImage(() => images.map(({ default: content }) => content));
+      })();
+    } else if (src === 'Advanced Checkpoint - KD-Tree') {
+      (async function getImage() {
+        const { default: content } = await import(`./Checkpoints/kd-tree.png`);
+        setImage(() => [content]);
       })();
     } else {
       (async function getImage() {
@@ -178,7 +183,14 @@ function Main() {
         })}
       </SideSection>
       <MainSection>
-        <Image src={currentImage} altText={currentImage} />
+        <Image
+          src={currentImage}
+          altText={
+            currentImage !== 'Advanced Checkpoint - KD-Tree'
+              ? currentImage
+              : 'KD-Tree implementation'
+          }
+        />
       </MainSection>
     </div>
   );

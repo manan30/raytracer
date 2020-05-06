@@ -1,9 +1,11 @@
-const advancedCheckpoint = 'Advanced Checkpoint - OSL';
+const advancedCheckpointOSL = 'Advanced Checkpoint - OSL';
+const advancedCheckpointKDTree = 'Advanced Checkpoint - KD-Tree';
 
 export const checkpoints = new Array(7)
   .fill('Checkpoint')
   .map((v, i) => `${v} ${i + 1}`)
-  .concat(advancedCheckpoint);
+  .concat(advancedCheckpointOSL)
+  .concat(advancedCheckpointKDTree);
 
 export const ToneReproductionResults = [
   'Reinhard-1',
@@ -14,8 +16,8 @@ export const ToneReproductionResults = [
   'Ward-3',
 ];
 
-export const AdvancedCheckpointResults = ['osl.gif', 'osl-texture.png'];
-export const AdvancedCheckpointCaptions = [
+export const AdvancedCheckpointOSLResults = ['osl.gif', 'osl-texture.png'];
+export const AdvancedCheckpointOSLCaptions = [
   'Open Shader Language Tutorial',
   'Texture generated using Open Shader Language',
 ];
