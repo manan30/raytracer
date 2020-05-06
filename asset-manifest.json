@@ -1,7 +1,7 @@
 {
   "files": {
-    "static/js/0.f0f4bcc2.chunk.js": "/raytracer/static/js/0.f0f4bcc2.chunk.js",
-    "static/js/0.f0f4bcc2.chunk.js.map": "/raytracer/static/js/0.f0f4bcc2.chunk.js.map",
+    "static/js/0.02d4b3e4.chunk.js": "/raytracer/static/js/0.02d4b3e4.chunk.js",
+    "static/js/0.02d4b3e4.chunk.js.map": "/raytracer/static/js/0.02d4b3e4.chunk.js.map",
     "static/js/1.4d541245.chunk.js": "/raytracer/static/js/1.4d541245.chunk.js",
     "static/js/1.4d541245.chunk.js.map": "/raytracer/static/js/1.4d541245.chunk.js.map",
     "static/js/2.2933db27.chunk.js": "/raytracer/static/js/2.2933db27.chunk.js",
@@ -28,16 +28,16 @@
     "static/js/12.89917708.chunk.js.map": "/raytracer/static/js/12.89917708.chunk.js.map",
     "static/js/13.baa76f77.chunk.js": "/raytracer/static/js/13.baa76f77.chunk.js",
     "static/js/13.baa76f77.chunk.js.map": "/raytracer/static/js/13.baa76f77.chunk.js.map",
-    "main.js": "/raytracer/static/js/main.1e679ff0.chunk.js",
-    "main.js.map": "/raytracer/static/js/main.1e679ff0.chunk.js.map",
-    "runtime-main.js": "/raytracer/static/js/runtime-main.d1d13d67.js",
-    "runtime-main.js.map": "/raytracer/static/js/runtime-main.d1d13d67.js.map",
+    "main.js": "/raytracer/static/js/main.f082d4bc.chunk.js",
+    "main.js.map": "/raytracer/static/js/main.f082d4bc.chunk.js.map",
+    "runtime-main.js": "/raytracer/static/js/runtime-main.78f26916.js",
+    "runtime-main.js.map": "/raytracer/static/js/runtime-main.78f26916.js.map",
     "static/js/16.481ff36c.chunk.js": "/raytracer/static/js/16.481ff36c.chunk.js",
     "static/js/16.481ff36c.chunk.js.map": "/raytracer/static/js/16.481ff36c.chunk.js.map",
     "static/js/17.5b77cd59.chunk.js": "/raytracer/static/js/17.5b77cd59.chunk.js",
     "static/js/17.5b77cd59.chunk.js.map": "/raytracer/static/js/17.5b77cd59.chunk.js.map",
     "index.html": "/raytracer/index.html",
-    "precache-manifest.090052c632acf7625ca6d29bf3516dbb.js": "/raytracer/precache-manifest.090052c632acf7625ca6d29bf3516dbb.js",
+    "precache-manifest.31690fc67ee359c190700d00928fffd4.js": "/raytracer/precache-manifest.31690fc67ee359c190700d00928fffd4.js",
     "service-worker.js": "/raytracer/service-worker.js",
     "static/js/16.481ff36c.chunk.js.LICENSE.txt": "/raytracer/static/js/16.481ff36c.chunk.js.LICENSE.txt",
     "static/media/Checkpoint 1.png": "/raytracer/static/media/Checkpoint 1.0d723c66.png",
@@ -51,13 +51,13 @@
     "static/media/Ward-1.png": "/raytracer/static/media/Ward-1.2ae918bb.png",
     "static/media/Ward-2.png": "/raytracer/static/media/Ward-2.85a36b6b.png",
     "static/media/Ward-3.png": "/raytracer/static/media/Ward-3.c6dce5bf.png",
-    "static/media/kd-tree.png": "/raytracer/static/media/kd-tree.181146c4.png",
+    "static/media/kd-tree.png": "/raytracer/static/media/kd-tree.b07eafca.png",
     "static/media/osl-texture.png": "/raytracer/static/media/osl-texture.7b58208a.png",
     "static/media/osl.gif": "/raytracer/static/media/osl.f073b7ba.gif"
   },
   "entrypoints": [
-    "static/js/runtime-main.d1d13d67.js",
+    "static/js/runtime-main.78f26916.js",
     "static/js/16.481ff36c.chunk.js",
-    "static/js/main.1e679ff0.chunk.js"
+    "static/js/main.f082d4bc.chunk.js"
   ]
 }
